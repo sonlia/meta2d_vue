@@ -806,7 +806,7 @@ onMounted(async () => {
 function getRandomBrightColor() {
     // 定义亮度范围
     const highBrightness = { min: 200, max: 255 };
-    const lowBrightness = { min: 71, max: 210 }; // 调整下限以确保颜色鲜艳
+    const lowBrightness = { min: 128, max: 192 }; // 调整下限以确保颜色鲜艳
 
     function getRandomBetween(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
