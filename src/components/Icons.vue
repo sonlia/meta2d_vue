@@ -868,6 +868,7 @@ const updateColor = (pen, params) => {
   let circuitNode
   const updateNode = (id, color, powerId) => {
     const node = meta2d.findOne(id)
+    if(!node)return 
     if (node?.flag == "power" && node.id != powerId && node.isOn == 1) {
       circuitNode = ""
       console.log("....", node.flag, node.id, powerId)
@@ -889,7 +890,7 @@ const updateColor = (pen, params) => {
         color: color,
       })
     }
-    if (node.type == 1) {
+    if (node?.type == 1) {
       meta2d.setValue({
         id: node.id,
         color: color,
@@ -897,7 +898,7 @@ const updateColor = (pen, params) => {
     }
 
     // 如果开关  断开 则不继续遍历
-    if (node.flag === "loadSwitch" || node.flag === "circuitBreaker") {
+    if (node?.flag === "loadSwitch" || node?.flag === "circuitBreaker") {
       if (node.showChild == 0) {
         return
       }
@@ -933,6 +934,7 @@ globalThis.updateSwitchNode = (pen, params) => {
   if (circuitNode) {
     meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })
   }
+  updateColor(pen, params)
 }
 globalThis.powerUpdate = (pen, params) => {
   const cacheColor = pen.color
@@ -955,6 +957,7 @@ globalThis.powerUpdate = (pen, params) => {
       meta2d.setValue({ id: pen.id, isOn: 1, color: cacheColor })
     }
   }
+  updateColor(pen, params)
 }
 function dragPen(data, e) {
   const json = JSON.stringify(data)
