@@ -32,14 +32,14 @@ async function readDirectory(dir) {
 }
 
 // 加载根节点
-app.get('/loadRoot', async (req, res) => {
+app.get('/api/loadRoot', async (req, res) => {
   const rootNodes = await readDirectory(baseDir);
   const data = [{ id: baseDir, label: "projectData", children: rootNodes }];
   res.json(data);
 });
 
 // 加载子节点（懒加载）
-app.post('/loadChildren', async (req, res) => {
+app.post('/api/loadChildren', async (req, res) => {
   const { id } = req.body;
   const children = await readDirectory(id);
   res.json(children);
@@ -67,7 +67,7 @@ function getUniqueName(parentId, baseName, isDir) {
 }
 
 // 添加目录
-app.post('/addFolder', async (req, res) => {
+app.post('/api/addFolder', async (req, res) => {
   const { parentId, name } = req.body;
   const uniqueName = getUniqueName(parentId, name, true);
   const newNodePath = path.join(parentId, uniqueName);
@@ -82,7 +82,7 @@ app.post('/addFolder', async (req, res) => {
 });
 
 // 添加文件
-app.post('/addFile', async (req, res) => {
+app.post('/api/addFile', async (req, res) => {
   const { parentId, name } = req.body;
   const uniqueName = getUniqueName(parentId, name, false);
   const newFilePath = path.join(parentId, uniqueName);
@@ -97,7 +97,7 @@ app.post('/addFile', async (req, res) => {
 });
 
 // 删除节点
-app.post('/delete', async (req, res) => {
+app.post('/api/delete', async (req, res) => {
   const { id } = req.body;
 
   try {
@@ -110,7 +110,7 @@ app.post('/delete', async (req, res) => {
 });
 
 // 重命名节点
-app.post('/rename', async (req, res) => {
+app.post('/api/rename', async (req, res) => {
   const { id, newName } = req.body;
   const newPath = path.join(path.dirname(id), newName);
 
@@ -123,10 +123,11 @@ app.post('/rename', async (req, res) => {
   }
 });
 // 保存文件内容
-app.post('/saveFile', async (req, res) => {
+app.post('/api/saveFile', async (req, res) => {
   const { id, content } = req.body;
 
   try {
+    
     await writeFile(id, content, { encoding: 'utf8' });
     res.json({ success: true, message: 'File saved successfully.' });
   } catch (err) {
@@ -136,15 +137,26 @@ app.post('/saveFile', async (req, res) => {
 });
 
 // 读取文件内容
-app.post('/readFile', async (req, res) => {
+app.post('/api/readFile', async (req, res) => {
   const { id } = req.body;
 
   try {
     const content = await fs.promises.readFile(id, { encoding: 'utf8' });
+ 
     res.json({ success: true, content });
   } catch (err) {
     console.error(err);
     res.json({ success: false, message: err.message });
   }
 });
+
+
+const distDir = path.join("../front", 'dist');
+app.use(express.static(distDir));
+
+// 捕获所有路由请求，返回 index.html（支持 SPA）
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(distDir, 'index.html'));
+});
+
 app.listen(3000, () => console.log('Server is running on port 3000'));

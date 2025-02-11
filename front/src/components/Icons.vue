@@ -6,7 +6,7 @@ import { Meta2d } from "@meta2d/core"
 import { computed, onMounted, reactive, ref, watch } from "vue"
 import axios from "axios"
 import { deepClone } from "@meta2d/core"
-import {currentSelect} from "../data/defaultsConfig.js"
+import {currentSelect,lastChangeTime} from "../data/defaultsConfig.js"
 const activeName = ref("filelist")
 let iconList = reactive([...defaultIcons])
 const filePath = ref()
@@ -1623,10 +1623,15 @@ const getCurrentSelect =async (data)=>{
     const response = await axios.post("/api/readFile", node);
   
   if (response.data.success) {
-    if(response.data.content==="")return
-    const data = JSON.parse(response.data.content)
- 
-   meta2d.open(data)
+    if(response.data.content===""){
+      meta2d.open("")
+    }else{
+
+      const data = JSON.parse(response.data.content)
+      lastChangeTime.value = data.lastChangeTime
+      meta2d.open(data.projectData)
+    }
+    meta2d.store.data.locked = 2
   } else {
     alert(response.data.message || "打开错误.");
   }

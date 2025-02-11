@@ -18,7 +18,7 @@
       </el-sub-menu>
       <el-menu-item v-else @click="dispatchFunc(item.action)" :index="index+1+''">{{ item.name }}</el-menu-item>
     </div>
-
+    <el-menu-item text-codisabled="true" style="font-size: small;">最后更新时间：{{lastChangeTime}}</el-menu-item>
   <div class="flex-grow">
   </div>
     <div v-for="(item,index) in menu.right">
@@ -36,6 +36,7 @@
       <el-menu-item v-else @click="dispatchFunc(item.action,item.value,item.icon)" :index="index+1+''"><i v-if="item.icon" :title="item.name" class="t-icon font-size" :class="item.icon"></i>{{item.name }}</el-menu-item>
 
     </div>
+    
     <el-sub-menu>
       <template #title>
         缩放
@@ -55,11 +56,11 @@
 </template>
 
 <script lang="js" setup>
-import {menu,dispatchFunc} from "../data/defaultsConfig.js"
-import {onMounted, ref} from "vue";
+import {menu,dispatchFunc,currentSelect,lastChangeTime} from "../data/defaultsConfig.js"
+import {onMounted, ref, watch} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
 
-let lockNumber = 0
+let lockNumber = 2
 let lockStatus = ref("锁定")
 let lockIcon = ref("t-unlock")
 let scaleValue = ref(10)
@@ -67,7 +68,10 @@ let scaleValue = ref(10)
 const lockIcons = ['l-unlock','l-lock','l-wufayidong']
 const lockStatusList = ['编辑','预览','锁定']
 
-
+watch(currentSelect,()=>{
+  lockNumber=2
+  lockStatus.value="锁定"
+})
 function changeLock() {
   lockNumber += 1
   lockNumber = lockNumber % 3

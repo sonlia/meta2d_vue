@@ -10,7 +10,7 @@ function getUserDir(path, extend = []) {
     return fileList.concat(extend) // 合并路径，方便未来用户自定义扩充路径
   }
 }
-
+export const lastChangeTime=ref("")
 export const  currentSelect = ref();
 export const userPensUrl = {
   icon: getUserDir("/icon/", []),
@@ -49,11 +49,7 @@ export const menu = {
             action: "saveAs",
             value: "png",
           },
-          {
-            name: "保存当前图纸",
-            action: "saveAs",
-            value: "png",
-          },
+
       ],
     },
 
@@ -335,8 +331,10 @@ const menuFunc = {
 
 
    async saveToserver() {
-    const jsonData = window.meta2d.data() // 获取数据 数据怎么来？怎么处理？
-    const json = JSON.stringify(jsonData)
+  
+ 
+    const  jsonData = meta2d.data()
+    const json = JSON.stringify({projectData:jsonData,lastChangeTime:new Date().toISOString(),switchChangHistory:[]})
     const node = {id:currentSelect.value,content:json}
     // meta  打开
     const response = await axios.post("/api/saveFile", node);
@@ -345,7 +343,7 @@ const menuFunc = {
     
   console.log("保存成功")
   } else {
-    alert(response.data.message || "打开错误.");
+    alert(response.data.message || "保存错误.");
   }
   },
   saveFile() {
