@@ -3,6 +3,7 @@ import { parseSvg } from "@meta2d/svg"
 import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
+import diff from "microdiff";
 import {ref} from "vue"
 function getUserDir(path, extend = []) {
   return async () => {
@@ -10,7 +11,22 @@ function getUserDir(path, extend = []) {
     return fileList.concat(extend) // 合并路径，方便未来用户自定义扩充路径
   }
 }
+function formatDate(dateStr) {
+  const  date = new Date(dateStr)
+  const year = date.getFullYear(); // 年
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 月，补零
+  const day = String(date.getDate()).padStart(2, '0'); // 日，补零
+
+  const hours = String(date.getHours()).padStart(2, '0'); // 小时，24小时制，补零
+  const minutes = String(date.getMinutes()).padStart(2, '0'); // 分钟，补零
+  const seconds = String(date.getSeconds()).padStart(2, '0'); // 秒，补零
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+export  const  lockStatus =ref()
 export const lastChangeTime=ref("")
+export  const  switchChangHistory =ref([])
+export let  oldData = {}
 export const  currentSelect = ref();
 export const userPensUrl = {
   icon: getUserDir("/icon/", []),
@@ -334,7 +350,29 @@ const menuFunc = {
   
  
     const  jsonData = meta2d.data()
-    const json = JSON.stringify({projectData:jsonData,lastChangeTime:new Date().toISOString(),switchChangHistory:[]})
+    // 过滤 开关
+    const filterData=(x)=>{
+      if( x?.flag=="switch"){
+
+        return  {status:x.showChild,id:x.id}
+      }
+      if(x?.flag=="power"){
+        return {status:x.isOn,id:x.id}
+      }
+    }
+    const newDiffData = jsonData.pens?.map(x=>filterData(x)).filter(x=>x!=undefined)
+   
+   
+    if(oldData?.value){
+      const  oldDiffData = oldData?.value.pens?.map(x=>filterData(x)).filter(x=>x!=undefined)
+      const diffData = diff(oldDiffData,newDiffData)
+      if(diffData.length!=0){
+
+        switchChangHistory.value.append({[Date.now()]:diffData})
+      }
+    }
+    console.log(switchChangHistory.value)
+    const json = JSON.stringify({projectData:jsonData,lastChangeTime:formatDate(new Date().toISOString()),switchChangHistory:switchChangHistory.value})
     const node = {id:currentSelect.value,content:json}
     // meta  打开
     const response = await axios.post("/api/saveFile", node);

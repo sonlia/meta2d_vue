@@ -2,13 +2,16 @@
 import Icons from "./Icons.vue";
 import Meta2d from "./Meta2d.vue";
 import Setting from "./Setting.vue";
+import changHistory from "./changHistory.vue";
+import  {lockStatus} from "../data/defaultsConfig.js"
 </script>
 
 <template>
   <div class="main">
     <Icons></Icons>
     <Meta2d></Meta2d>
-    <Setting></Setting>
+    <Setting v-show="lockStatus==0"></Setting>
+    <changHistory v-show="lockStatus!=0"></changHistory>
   </div>
 </template>
 

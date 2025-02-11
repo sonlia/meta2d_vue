@@ -6,7 +6,7 @@ import { Meta2d } from "@meta2d/core"
 import { computed, onMounted, reactive, ref, watch } from "vue"
 import axios from "axios"
 import { deepClone } from "@meta2d/core"
-import {currentSelect,lastChangeTime} from "../data/defaultsConfig.js"
+import {currentSelect,lastChangeTime,lockStatus,switchChangHistory,oldData} from "../data/defaultsConfig.js"
 const activeName = ref("filelist")
 let iconList = reactive([...defaultIcons])
 const filePath = ref()
@@ -530,7 +530,7 @@ onMounted(async () => {
         lineWidth: 1,
         fontSize: 12,
         lineHeight: 1.5,
-        flag: "circuitBreaker",
+        flag: "switch",
         anchors: [
           {
             x: 0.5,
@@ -729,7 +729,7 @@ onMounted(async () => {
         lineHeight: 1.5,
         lineWidth: 1,
         name: "loadSwitch",
-        flag: "loadSwitch",
+        flag: "switch",
         rotate: 0,
         showChild: 0,
         width: 120.00000000000006,
@@ -1405,7 +1405,7 @@ onMounted(async () => {
             }
         ],
         "rotate": 0,
-        flag: "loadSwitch",
+        flag: "switch",
         "events": [
             {
                 "where": {
@@ -1479,7 +1479,7 @@ function getRandomBrightColor() {
     return "#" + components.map(componentToHex).join('');
 }
 const updateColor = (pen, params) => {
-  const blacklist = ["loadSwitch", "circuitBreaker", "text"]
+  const blacklist = ["switch",  "text"]
   // power节点
   const start = meta2d.data().pens.filter((n) => n.flag == "power" && n.isOn === 1)
   //获取 所有非 开关节点的所有节点
@@ -1544,7 +1544,7 @@ const updateColor = (pen, params) => {
     }
 
     // 如果开关  断开 则不继续遍历
-    if (node?.flag === "loadSwitch" || node?.flag === "circuitBreaker") {
+    if (node?.flag === "switch" ) {
       if (node.showChild == 0) {
         return
       }
@@ -1629,9 +1629,13 @@ const getCurrentSelect =async (data)=>{
 
       const data = JSON.parse(response.data.content)
       lastChangeTime.value = data.lastChangeTime
+      switchChangHistory.value = data.switchChangHistory
+      oldData.value  = data.projectData
       meta2d.open(data.projectData)
     }
     meta2d.store.data.locked = 2
+    lockStatus.value=2
+
   } else {
     alert(response.data.message || "打开错误.");
   }

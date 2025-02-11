@@ -18,7 +18,7 @@
       </el-sub-menu>
       <el-menu-item v-else @click="dispatchFunc(item.action)" :index="index+1+''">{{ item.name }}</el-menu-item>
     </div>
-    <el-menu-item text-codisabled="true" style="font-size: small;">最后更新时间：{{lastChangeTime}}</el-menu-item>
+    <el-menu-item text-codisabled="true" style="font-size: small;" disabled>最后更新时间：{{lastChangeTime}}</el-menu-item>
   <div class="flex-grow">
   </div>
     <div v-for="(item,index) in menu.right">
@@ -47,37 +47,30 @@
     </el-sub-menu>
     <el-menu-item @click="changeLock" >
 
-      <svg  class="l-icon" aria-hidden="true">
-        <use :xlink:href="'#' +lockIcon"></use>
-      </svg>
-      <i class="t-icon" :class="lockIcon"></i>{{lockStatus}}
+    
+      <i class="t-icon" ></i>{{statusLable}}
     </el-menu-item>
   </el-menu>
 </template>
 
 <script lang="js" setup>
-import {menu,dispatchFunc,currentSelect,lastChangeTime} from "../data/defaultsConfig.js"
-import {onMounted, ref, watch} from "vue";
+import {menu,dispatchFunc,currentSelect,lastChangeTime,lockStatus} from "../data/defaultsConfig.js"
+import {computed, onMounted, ref, watch} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
-
-let lockNumber = 2
-let lockStatus = ref("锁定")
-let lockIcon = ref("t-unlock")
-let scaleValue = ref(10)
-
-const lockIcons = ['l-unlock','l-lock','l-wufayidong']
+ 
+ 
 const lockStatusList = ['编辑','预览','锁定']
+ 
+let scaleValue = ref(10)
+ 
+const  statusLable = computed(()=> lockStatusList[lockStatus.value])
 
-watch(currentSelect,()=>{
-  lockNumber=2
-  lockStatus.value="锁定"
-})
+ 
 function changeLock() {
-  lockNumber += 1
-  lockNumber = lockNumber % 3
-  meta2d.store.data.locked = lockNumber
-  lockIcon.value = lockIcons[lockNumber]
-  lockStatus.value = lockStatusList[lockNumber]
+  lockStatus.value += 1
+  lockStatus.value = lockStatus.value % 3
+  meta2d.store.data.locked = lockStatus.value
+ 
 }
 
 const eventbus = useEventbus()
@@ -99,9 +92,7 @@ onMounted(()=>{
     })
 
     meta2d.on('lock',()=>{
-      meta2d.store.data.locked = 2
-      lockIcon.value = lockIcons[2]
-      lockStatus.value = lockStatusList[2]
+
     })
   })
 })
