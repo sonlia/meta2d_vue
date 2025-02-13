@@ -4,8 +4,8 @@
 
     <!-- 右键菜单 -->
     <div v-if="showMenu" :style="{ left: `${menuLeft}px`, top: `${menuTop}px` }" class="context-menu" @mouseleave="showMenu = false">
-      <el-button @click="add('file')" style="width: 100%">添加工程</el-button>
-      <el-button @click="add('folder')" style="width: 100%">添加目录</el-button>
+      <el-button @click="add('file')" style="width: 100%">添加文件夹</el-button>
+      <el-button @click="add('folder')" style="width: 100%">添加项目</el-button>
       <el-button v-if="contentshow" @click="handleRemove" style="width: 100%">删除</el-button>
       <el-button v-if="contentshow" @click="handleRename" style="width: 100%">重命名</el-button>
     </div>

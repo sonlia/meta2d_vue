@@ -18,8 +18,7 @@
       </el-sub-menu>
       <el-menu-item v-else @click="dispatchFunc(item.action)" :index="index+1+''">{{ item.name }}</el-menu-item>
     </div>
-    <el-menu-item text-codisabled="true" style="font-size: small;" disabled>最后更新时间：{{lastChangeTime}}</el-menu-item>
-  <div class="flex-grow">
+   <div class="flex-grow">
   </div>
     <div v-for="(item,index) in menu.right">
       <el-sub-menu v-if="item.children"  :index="(index+1)+''">
@@ -54,7 +53,7 @@
 </template>
 
 <script lang="js" setup>
-import {menu,dispatchFunc,currentSelect,lastChangeTime,lockStatus} from "../data/defaultsConfig.js"
+import {menu,dispatchFunc,currentSelect,lockStatus} from "../data/defaultsConfig.js"
 import {computed, onMounted, ref, watch} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
  

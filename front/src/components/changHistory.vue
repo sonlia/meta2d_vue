@@ -93,7 +93,11 @@ const formattedData = computed(() => {
   box-sizing: border-box;
   overflow: hidden;
 }
-:deep(.el-card__body) {
-  padding: 8px !important; /* 使用 !important 确保覆盖默认样式 */
+/* 覆盖 CSS 变量 */
+
+</style>
+<style>
+.card-item  .el-card__body  {
+   padding: 8px !important; /* 覆盖默认变量值 */
 }
 </style>

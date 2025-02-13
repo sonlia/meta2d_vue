@@ -6,7 +6,7 @@ import { Meta2d } from "@meta2d/core"
 import { computed, onMounted, reactive, ref, watch } from "vue"
 import axios from "axios"
 import { deepClone } from "@meta2d/core"
-import { currentSelect, lastChangeTime, lockStatus, switchChangHistory,openFile } from "../data/defaultsConfig.js"
+import { currentSelect,  lockStatus, switchChangHistory,openFile } from "../data/defaultsConfig.js"
 const activeName = ref("filelist")
 let iconList = reactive([...defaultIcons])
 const filePath = ref()

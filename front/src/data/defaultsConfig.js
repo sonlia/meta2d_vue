@@ -23,8 +23,7 @@ export async function  openFile(id){
       const resdata = JSON.parse(response.data.content)
       if (resdata.length > 0 && typeof resdata[0] === "object" && resdata[0] !== null) {
         const keys = Object.keys(array[0])
-        lastChangeTime.value = new Date(parseInt(keys)).toLocaleString()
-      }
+       }
       switchChangHistory.value = resdata.switchChangHistory
 
       meta2d.open(resdata.projectData)
@@ -96,7 +95,7 @@ function compareData(oldList, newList) {
   return result;
 }
 export const lockStatus = ref()
-export const lastChangeTime = ref("")
+ 
 export const switchChangHistory = ref([])
 
 export const currentSelect = ref()
@@ -469,14 +468,13 @@ const menuFunc = {
       
         if (diffData.length != 0) {
           const time  = Date.now()
-          lastChangeTime.value= time
+           
           switchChangHistory.value.unshift({ [time]: diffData })
         }
       }
 
       const json = JSON.stringify({ projectData: jsonData, switchChangHistory: switchChangHistory.value })
-      // const json = JSON.stringify({ projectData: jsonData, lastChangeTime: formatDate(new Date().toISOString()), switchChangHistory: switchChangHistory.value })
-      const node = { id: currentSelect.value, content: json }
+       const node = { id: currentSelect.value, content: json }
       // meta  打开
       const response = await axios.post("/api/saveFile", node)
 
