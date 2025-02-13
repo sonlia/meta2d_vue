@@ -21,6 +21,7 @@ async function readDirectory(dir) {
         const children = await readDirectory(path.join(dir, file.name));
         nodes.push({ id: path.join(dir, file.name), label: file.name, children });
       } else {
+        if(file.name.startsWith("bak-")) break
         nodes.push({ id: path.join(dir, file.name), label: file.name });
       }
     }
@@ -123,12 +124,27 @@ app.post('/api/rename', async (req, res) => {
   }
 });
 // 保存文件内容
+// 保存文件内容
 app.post('/api/saveFile', async (req, res) => {
   const { id, content } = req.body;
 
   try {
-    
-    await writeFile(id, content, { encoding: 'utf8' });
+    const filePath = id; // 文件路径
+    const backupFilePath = `bak-${path.basename(filePath)}`; // 备份文件路径
+    const backupDir = path.dirname(filePath); // 备份目录
+
+    // 检查文件是否存在
+    const fileExists = await fileExistsCheck(filePath);
+
+    if (fileExists) {
+      // 如果文件存在，先备份
+      const fullBackupPath = path.join(backupDir, backupFilePath);
+      await fs.promises.copyFile(filePath, fullBackupPath);
+      console.log(`Backup created: ${fullBackupPath}`);
+    }
+
+    // 写入新内容到原始文件
+    await fs.promises.writeFile(filePath, content, { encoding: 'utf8' });
     res.json({ success: true, message: 'File saved successfully.' });
   } catch (err) {
     console.error(err);
@@ -136,6 +152,15 @@ app.post('/api/saveFile', async (req, res) => {
   }
 });
 
+// 辅助函数：检查文件是否存在
+async function fileExistsCheck(path) {
+  try {
+    await fs.promises.access(path);
+    return true; // 文件存在
+  } catch {
+    return false; // 文件不存在
+  }
+}
 // 读取文件内容
 app.post('/api/readFile', async (req, res) => {
   const { id } = req.body;

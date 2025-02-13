@@ -1,86 +1,99 @@
 <template>
   <div class="setting">
-    <!-- 表格组件 -->
-    <el-table 
-      :data="sortedData" 
-      style="width: 100%" 
-      border 
-      row-key="id"
-    >
-      <!-- 展开行 -->
-      <el-table-column type="expand">
-        <template #default="props">
-          <!-- 遍历 content 数组，为每条数据生成一个卡片 -->
-          <el-card 
-            v-for="(item, index) in props.row.content" 
-            :key="index" 
-            class="box-card" 
-            style="margin-bottom: 10px; width: 100%; box-sizing: border-box;"
-          >
-            <div class="card-item">
-              <span><strong>内容 {{ index + 1 }}：</strong>{{ item }}</span>
-            </div>
-          </el-card>
-        </template>
-      </el-table-column>
-
-      <!-- 表头列 -->
-      <el-table-column prop="lastChange" label="时间" width="180">
-        <template #default="scope">
-          {{ scope.row.lastChange }}
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-scrollbar style="height: 100%">
+      <el-card v-for="(item, index) in formattedData" :key="index" class="card-item">
+        <!-- 修正了这里的 <b> 标签 -->
+        <div class="card-header"><b>  {{ item.timestamp }}</b></div>
+        <div v-if="item.added.length !== 0" class="section">
+          <b>添加:</b>
+          <div v-for="(add, addIndex) in item.added" :key="`added-${addIndex}`" class="item">
+            名称: {{ add.text || '无' }}, 状态: {{ add.status === 0 ? '关' : '开' }}
+          </div>
+        </div>
+        <div v-if="item.removed.length !== 0" class="section">
+          <b>删除:</b>
+          <div v-for="(remove, removeIndex) in item.removed" :key="`removed-${removeIndex}`" class="item">
+            名称: {{ remove.text || '无' }}, 状态: {{ remove.status === 0 ? '关' : '开' }}
+          </div>
+        </div>
+        <div v-if="item.updated.length !== 0" class="section">
+          <b>更新:</b>
+          <div v-for="(update, updateIndex) in item.updated" :key="`updated-${updateIndex}`" class="item">
+            名称: {{ update.text || '无' }}<br />
+            更改:  {{ update.change.status?.oldStatus === 0 ? '关' : '开' }} --> {{ update.change.status?.newStatus === 0 ? '关' : '开' }}
+          </div>
+        </div>
+      </el-card>
+    </el-scrollbar>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { ElTable, ElTableColumn, ElCard } from 'element-plus';
-import {lastChangeTime  ,switchChangHistory } from "../data/defaultsConfig.js" 
- 
+import { computed } from "vue";
+import { switchChangHistory } from "../data/defaultsConfig.js";
 
-// 排序后的数据
-const sortedData = computed(() => {
-    return switchChangHistory.value
-  // return switchChangHistory.sort((a, b) => a.lastChange - b.lastChange); // 按时间排序
+const formattedData = computed(() => {
+  return switchChangHistory.value.map(item => {
+    const timestamp = Object.keys(item)[0];
+    const data = item[timestamp];
+    return {
+      timestamp: new Date(parseInt(timestamp)).toLocaleString(),
+      added: data.added.map(add => ({ ...add, text: add.text || '无' })),
+      removed: data.removed.map(remove => ({ ...remove, text: remove.text || '无' })),
+      updated: data.updated.map(update => ({
+        ...update,
+        change: update.change,
+        text: update.text || '无'
+      }))
+    };
+  });
 });
-
- 
 </script>
 
-<style scoped>
-/* 表格样式 */
-.el-table {
-  width: 100%;
-  box-sizing: border-box;
-}
-
+<style>
 /* 卡片样式 */
-.box-card {
-  width: 100%; /* 卡片宽度自适应 */
-  box-sizing: border-box; /* 包含边框和内边距 */
-  margin-bottom: 10px; /* 添加上下间距 */
-   
-}
-
 .card-item {
   margin-bottom: 10px;
-  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+ 
 }
-.card-item:last-child {
-  margin-bottom: 0;
+
+.card-header {
+  font-size: 16px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.section {
+  padding: 10px;
+  border-bottom: 1px dashed #ebeef5;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.item {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #606266;
 }
 
 /* 父级容器样式 */
 .setting {
   position: relative;
   display: flex;
+  flex-direction: column;
   width: 350px;
-  padding: 16px 0 0 16px;
-  overflow: auto;
-  box-shadow: 0 2px 4px 0 #dad7d7;
-  overflow: hidden; /* 防止内容溢出 */
+  height: 100%;
+  padding: 4px;
   box-sizing: border-box;
+  overflow: hidden;
+}
+:deep(.el-card__body) {
+  padding: 8px !important; /* 使用 !important 确保覆盖默认样式 */
 }
 </style>

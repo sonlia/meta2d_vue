@@ -19,9 +19,10 @@ import  {lockStatus} from "../data/defaultsConfig.js"
 
 .main{
   flex:1;
-  height: calc(100% - 59px);
+  height: calc(100% - 58px);
   display: flex;
   justify-content: flex-start;
+  overflow: hidden;
 }
 
 
