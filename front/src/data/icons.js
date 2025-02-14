@@ -1947,7 +1947,7 @@ export async function getOtherIcons(){
 }
 async function getUnicodeIcons(){
     let icons = []
-    const iconsUrl = await userPensUrl.icon()  // 获取字体图标的路径
+    const iconsUrl = await userPensUrl?.icon() ??[] // 获取字体图标的路径
     icons = await Promise.all(
         iconsUrl.map( url=> addIcons(url.name))  // 添加字体图标
     )
@@ -1985,7 +1985,7 @@ async function addIcons(url){
 async function getSvgs(){
     const folderName = "svg/"
     let svgs = []
-    const svgUrl =await userPensUrl.svg()
+    const svgUrl =await userPensUrl?.svg()??[]
     for (let i of svgUrl ){
         if(i.type === "directory"){
             const {data:files} = await axios.get(folderName+i.name+'/')
@@ -2008,7 +2008,7 @@ async function getSvgs(){
 async function getPngs(){
     const folderName = "png/"
     let png = []
-    const pngUrl =await userPensUrl.png()
+    const pngUrl =await userPensUrl?.png()??[]
     for (let i of pngUrl ){
         if(i.type === "directory"){
             const {data:files} = await axios.get(folderName+i.name+'/')
@@ -2028,7 +2028,7 @@ async function getPngs(){
 async function getPath2Ds(){
     const folderName = "path2D/"
     let path2d = []
-    const path2DUrl = await userPensUrl.path2D()
+    const path2DUrl = await userPensUrl?.path2D()??[]
     for (let i of path2DUrl){
         if(i.type === "directory"){
             const {data:files} = await axios.get(folderName+i.name+'/')
@@ -2060,7 +2060,7 @@ async function getPath2Ds(){
 async function getCanvasDraw(){
     const folderName = "canvasDraw/"
     let canvasDraw = []
-    const canvasUrl = await userPensUrl.canvasDraw()
+    const canvasUrl = await userPensUrl?.canvasDraw()??[]
     for (let i of canvasUrl){
         if(i.type === "directory"){
             const {data:files} = await axios.get(folderName+i.name+'/')

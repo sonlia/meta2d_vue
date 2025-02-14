@@ -7,7 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 .vscode
-back/projectData/*
+back/projectData/* 
+back/projectData/**/* 
 node_modules
 dist
 dist-ssr

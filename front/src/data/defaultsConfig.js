@@ -8,7 +8,9 @@ import { ref } from "vue"
 function getUserDir(path, extend = []) {
   return async () => {
     const { data: fileList } = await axios.get(path)
-    return fileList.concat(extend) // 合并路径，方便未来用户自定义扩充路径
+    console.log(fileList,"eeee3333333333e")
+    // return fileList.concat(extend) // 合并路径，方便未来用户自定义扩充路径
+    return
   }
 }
 export async function  openFile(id){
