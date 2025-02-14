@@ -1936,7 +1936,7 @@ export const defaultIcons =[
 export async function getOtherIcons(){
     let result = []
     let datas  = await Promise.all([
-        getUnicodeIcons(), // 引入字体图标
+        getUnicodeIcons(), // 引入字体 图标
         getSvgs(),
         getPngs(),
         getPath2Ds(),
