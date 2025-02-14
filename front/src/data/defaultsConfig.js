@@ -447,9 +447,7 @@ const menuFunc = {
       if (oldResponse.data.content !== "") {
         oldData = JSON.parse(oldResponse.data.content).projectData
 
-      } else {
-        alert(response.data.message || "打开错误.");
-      }}
+      } }
 
 
       const jsonData = meta2d.data()
