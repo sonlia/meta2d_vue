@@ -3,7 +3,7 @@ import { parseSvg } from "@meta2d/svg"
 import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
-import diff from "microdiff"
+ 
 import { ref } from "vue"
 function getUserDir(path, extend = []) {
   return async () => {
