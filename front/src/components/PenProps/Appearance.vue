@@ -754,17 +754,54 @@ const map = [
 
       },
       {
-        title:"文字高度",
+        title:"文字宽度",
         type:"number",
         multiShow:true,
         option:{
           min:0,
         },
-        prop:"textHeight",
+        prop:"textWidth",
         bindProp:m,
         event:"change",
-        func:updateFunc("textHeight")
+        func:updateFunc("textWidth")
 
+      },
+      {
+        title:"水平偏移",
+        type:"number",
+        multiShow:true,
+        option:{
+          min:0,
+        },
+        prop:"textLeft",
+        bindProp:m,
+        event:"change",
+        func:updateFunc("textLeft")
+
+      },
+      {
+        title:"垂直偏移",
+        type:"number",
+        multiShow:true,
+        option:{
+          min:0,
+        },
+        prop:"textTop",
+        bindProp:m,
+        event:"change",
+        func:updateFunc("textTop")
+
+      },
+      {
+        title:"点位号",
+        type:"input",
+        option:{
+          type:"textarea"
+        },
+        prop:"PointNumber",
+        bindProp:m,
+        event:"input",
+        func:updateFunc("PointNumber")
       },
       {
         title:"超出省略",

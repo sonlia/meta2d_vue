@@ -752,12 +752,16 @@ export const globalConfigProps = {
   animateInterval: 10,
   textRotate: true,
   textFlip: false,
+
 }
 
 export const appearanceProps = {
   x: 0,
   y: 0,
   text: "",
+  textLeft:0,
+  textTop:0,
+   PointNumber:"",
   color: "",
   width: 0,
   height: 0,
