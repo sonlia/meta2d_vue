@@ -27,7 +27,7 @@
   <script setup>
   import { reactive, ref } from 'vue';
 import axios from "axios"
-  import Cookies from 'js-cookie';
+ 
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
   
