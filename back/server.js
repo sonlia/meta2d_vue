@@ -2,12 +2,66 @@
 import express from 'express';
 import fs from 'fs'; // 导入原生 fs 模块（支持同步方法）
 import { readdir, mkdir, writeFile, rm, rename } from 'fs/promises'; // 异步方法
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
-
+ 
 const app = express();
-app.use(cors());
+app.use(cors({
+  credentials: true, // 允许携带 Cookie
+  origin: 'http://localhost:8080' // 前端地址
+}));
 app.use(express.json());
+
+
+
+app.use(cookieParser()); // 解析 Cookie
+
+// 单用户数据
+// 模拟用户数据
+const USER = {
+  username: 'test',
+  password: "test"
+};
+
+
+// 登录状态（简单模拟）
+let isAuthenticated = false;
+
+// 用户登录接口
+
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: '用户名和密码不能为空' });
+  }
+
+  if (username === USER.username &&  password === USER.password) {
+    res.cookie('authToken', 'true', {  maxAge: 60 * 60 * 1000 });
+    return res.json({ success: true, message: '登录成功' });
+  } else {
+    return res.status(401).json({ success: false, message: '用户名或密码错误' });
+  }
+});
+
+// 注销接口
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('authToken', { httpOnly: true, secure: true, sameSite: 'strict' });
+  return res.json({ success: true, message: '注销成功' });
+});
+// 验证用户登录状态的中间件
+function checkAuth(req, res, next) {
+  const auth = req.cookies.authToken;
+
+  if (auth !== 'true' ) {
+    return res.status(401).json({ success: false, message: '未授权访问' });
+  }
+
+  next();
+}
+
+
 
 const baseDir = './projectData'; // 指定要读取的目录
 
@@ -33,14 +87,14 @@ async function readDirectory(dir) {
 }
 
 // 加载根节点
-app.get('/api/loadRoot', async (req, res) => {
+app.get('/api/loadRoot',checkAuth, async (req, res) => {
   const rootNodes = await readDirectory(baseDir);
   const data = [{ id: baseDir, label: "projectData", children: rootNodes }];
   res.json(data);
 });
 
 // 加载子节点（懒加载）
-app.post('/api/loadChildren', async (req, res) => {
+app.post('/api/loadChildren', checkAuth,async (req, res) => {
   const { id } = req.body;
   const children = await readDirectory(id);
   res.json(children);
@@ -68,7 +122,7 @@ function getUniqueName(parentId, baseName, isDir) {
 }
 
 // 添加目录
-app.post('/api/addFolder', async (req, res) => {
+app.post('/api/addFolder',checkAuth, async (req, res) => {
   const { parentId, name } = req.body;
   const uniqueName = getUniqueName(parentId, name, true);
   const newNodePath = path.join(parentId, uniqueName);
@@ -83,7 +137,7 @@ app.post('/api/addFolder', async (req, res) => {
 });
 
 // 添加文件
-app.post('/api/addFile', async (req, res) => {
+app.post('/api/addFile', checkAuth,async (req, res) => {
   const { parentId, name } = req.body;
   const uniqueName = getUniqueName(parentId, name, false);
   const newFilePath = path.join(parentId, uniqueName);
@@ -98,7 +152,7 @@ app.post('/api/addFile', async (req, res) => {
 });
 
 // 删除节点
-app.post('/api/delete', async (req, res) => {
+app.post('/api/delete', checkAuth,async (req, res) => {
   const { id } = req.body;
 
   try {
@@ -111,7 +165,7 @@ app.post('/api/delete', async (req, res) => {
 });
 
 // 重命名节点
-app.post('/api/rename', async (req, res) => {
+app.post('/api/rename', checkAuth,async (req, res) => {
   const { id, newName } = req.body;
   const newPath = path.join(path.dirname(id), newName);
 
@@ -125,7 +179,7 @@ app.post('/api/rename', async (req, res) => {
 });
 // 保存文件内容
 // 保存文件内容
-app.post('/api/saveFile', async (req, res) => {
+app.post('/api/saveFile', checkAuth,async (req, res) => {
   const { id, content } = req.body;
 
   try {
@@ -162,7 +216,7 @@ async function fileExistsCheck(path) {
   }
 }
 // 读取文件内容
-app.post('/api/readFile', async (req, res) => {
+app.post('/api/readFile', checkAuth,async (req, res) => {
   const { id } = req.body;
 
   try {

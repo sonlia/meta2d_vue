@@ -3,8 +3,11 @@ import { parseSvg } from "@meta2d/svg"
 import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
- 
+import router  from "../router.js"
+
 import { ref } from "vue"
+ 
+ 
 function getUserDir(path, extend = []) {
   return async () => {
     const { data: fileList } = await axios.get(path)
@@ -137,6 +140,11 @@ export const menu = {
           name: "导出png",
           action: "saveAs",
           value: "png",
+        },
+        {
+          name: "用户退出",
+          action: "handleLogout",
+         
         },
       ],
     },
@@ -484,6 +492,21 @@ const menuFunc = {
         alert(response.data.message || "保存错误.")
       }
     },
+    // 注销逻辑
+  async handleLogout () {
+  try {
+    
+    const response = await axios.post('/api/logout');
+
+    if (response.data.success) {
+      ElMessage.success('注销成功');
+      
+      router.push('/login'); // 跳转到登录页
+    }
+  } catch (error) {
+    ElMessage.error('注销失败，请稍后再试');
+  }
+},
     saveFile() {
       const jsonData = window.meta2d.data() // 获取数据 数据怎么来？怎么处理？
       const json = JSON.stringify(jsonData)
