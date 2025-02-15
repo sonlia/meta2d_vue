@@ -63,7 +63,7 @@ function checkAuth(req, res, next) {
 
 
 
-const baseDir = './projectData'; // 指定要读取的目录
+const baseDir = './projectData'; // 指定要 读取的目录
 
 // 递归读取目录
 async function readDirectory(dir) {
