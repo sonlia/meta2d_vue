@@ -42,9 +42,174 @@ onMounted(async () => {
       ie.pens = Q.pens.filter((Ct) => We.includes(Ct.id))
     }
   }
+  const didaoSwitch = {
+    tag: "icon",
+    name: "地刀",
+    icon: "sgcc-jiedidaozhahe",
+    data:[
+    {
+        "width": 1.0000000000000004,
+        "height": 1,
+        "name": "image",
+        "iconFamily": "sgcc",
+        "icon": "",
+        "id": "456ffc0",
+        "parentId": "14ee16f3",
+        "children": [],
+        "x": 0,
+        "y": 0,
+        "lineWidth": 1,
+        "fontSize": 12,
+        "lineHeight": 1.5,
+        "anchors": [
+            {
+                "x": 0.5,
+                "y": 0,
+                "id": "0",
+                "penId": "456ffc0"
+            },
+            {
+                "x": 1,
+                "y": 0.5,
+                "id": "1",
+                "penId": "456ffc0"
+            },
+            {
+                "x": 0.5,
+                "y": 1,
+                "id": "2",
+                "penId": "456ffc0"
+            },
+            {
+                "x": 0,
+                "y": 0.5,
+                "id": "3",
+                "penId": "456ffc0"
+            }
+        ],
+        "ex": 1.0000000000000004,
+        "ey": 1,
+        "center": {
+            "x": 581.1363636363636,
+            "y": 321
+        },
+        "disableAnchor": true,
+        "color": "rgba(48, 238, 111, 1)",
+        "locked": 0
+    },
+    {
+        "width": 1.0000000000000004,
+        "height": 1,
+        "name": "image",
+        "iconFamily": "sgcc",
+        "icon": "",
+        "id": "7199d3c",
+        "parentId": "14ee16f3",
+        "children": [],
+        "x": 0,
+        "y": 0,
+        "lineWidth": 1,
+        "fontSize": 12,
+        "lineHeight": 1.5,
+        "anchors": [
+            {
+                "x": 0.5,
+                "y": 0,
+                "id": "0",
+                "penId": "7199d3c"
+            },
+            {
+                "x": 1,
+                "y": 0.5,
+                "id": "1",
+                "penId": "7199d3c"
+            },
+            {
+                "x": 0.5,
+                "y": 1,
+                "id": "2",
+                "penId": "7199d3c"
+            },
+            {
+                "x": 0,
+                "y": 0.5,
+                "id": "3",
+                "penId": "7199d3c"
+            }
+        ],
+        "ex": 1.0000000000000004,
+        "ey": 1,
+        "center": {
+            "x": 399.1363636363636,
+            "y": 303.5
+        },
+        "disableAnchor": true,
+        "color": "rgba(255, 89, 89, 1)",
+        "locked": 0
+    },
+    {
+        "id": "14ee16f3",
+        "name": "combine",
+        "x": 420.13636363636374,
+        "y": 242.2500000000001,
+        "ex": 560.1363636363637,
+        "ey": 382.25000000000017,
+        "width": 140,
+        "height": 140.00000000000006,
+        "center": {
+            "x": 490.13636363636374,
+            "y": 312.2500000000001
+        },
+        "children": [
+            "456ffc0",
+            "7199d3c"
+        ],
+        "showChild": 0,
+        "lineWidth": 1,
+        "fontSize": 12,
+        "lineHeight": 1.5,
+        "anchors": [
+            {
+                "x": 0.5,
+                "y": 0,
+                "id": "0",
+                "penId": "14ee16f3"
+            },
+            {
+                "x": 1,
+                "y": 0.5,
+                "id": "1",
+                "penId": "14ee16f3"
+            },
+            {
+                "x": 0.5,
+                "y": 1,
+                "id": "2",
+                "penId": "14ee16f3"
+            },
+            {
+                "x": 0,
+                "y": 0.5,
+                "id": "3",
+                "penId": "14ee16f3"
+            }
+        ],
+        "rotate": 0,
+        flag:"switch",
+        events: [
+          {
+            name: "click",
+            action: 6,
+            // params: "我是参数",//传到代码块的参数
+            value: "updateSwitchNode", //全局函数名
+          },
+        ],
+    }
+]
+  }
   const circuitBreakerSwitch = {
     tag: "icon",
-    name: "负荷开关",
+    name: "隔离开关",
     icon: "sgcc-gelikaiguanfen",
     data: [
       {
@@ -571,7 +736,7 @@ onMounted(async () => {
 
   const loadSwitch = {
     tag: "icon",
-    name: "负荷开关",
+    name: "断路器",
     icon: "sgcc-a-shouchekaiguanguan--_huaban1",
     data: [
       {
@@ -1432,6 +1597,7 @@ onMounted(async () => {
   showlist.value.push(power)
   showlist.value.push(text)
   showlist.value.push(fuhekaiguan)
+  showlist.value.push(didaoSwitch)
 })
 function getRandomBrightColor() {
   // 定义亮度范围
