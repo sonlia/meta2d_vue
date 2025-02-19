@@ -62,6 +62,9 @@ onMounted(async ()=>{
   meta2d.registerCanvasDraw({canvasTriangle})
   //注册锚点
   meta2d.registerAnchors({canvasTriangle:canvasTriangleAnchors})
+// 默认 锁住
+      meta2d.store.data.locked=3
+ 
   event.customEmit('opened')
   event.customEmit('load')
 
