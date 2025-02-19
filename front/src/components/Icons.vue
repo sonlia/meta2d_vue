@@ -42,6 +42,53 @@ onMounted(async () => {
       ie.pens = Q.pens.filter((Ct) => We.includes(Ct.id))
     }
   }
+  const bianyaqi = {
+    tag: "icon",
+    name: "变压器",
+    icon: "sgcc-shuangraozubianyaqiYdzhongxingdianyinchuxingxing-sanjiaoxinglianjie",
+    data:{
+    "width": 219.99999999999983,
+    "height": 219.99999999999983,
+    "name": "image",
+    "iconFamily": "sgcc",
+    "icon": "",
+    "id": "1a412a52",
+    "children": [],
+    "x": 309.0000000000001,
+    "y": 119.00000000000009,
+    "lineWidth": 1,
+    "fontSize": 12,
+    "lineHeight": 1.5,
+    "anchors": [
+        {
+            "x": 0.5,
+            "y": 0,
+            "id": "0",
+            "penId": "1a412a52"
+        },
+        {
+            "x": 1,
+            "y": 0.5,
+            "id": "1",
+            "penId": "1a412a52"
+        },
+        {
+            "x": 0.5,
+            "y": 1,
+            "id": "2",
+            "penId": "1a412a52"
+        },
+        {
+            "x": 0,
+            "y": 0.5,
+            "id": "3",
+            "penId": "1a412a52"
+        }
+    ],
+    "rotate": 0
+}
+  }
+
   const didaoSwitch = {
     tag: "icon",
     name: "地刀",
@@ -1572,7 +1619,7 @@ onMounted(async () => {
   const power = {
     tag: "icon",
     name: "电源",
-    icon: "sgcc-weibiaoti-1",
+    icon: "sgcc-fadianji",
     data: {
       width: 100,
       height: 100,
@@ -1580,7 +1627,7 @@ onMounted(async () => {
       isOn: 1,
       name: "icon",
       iconFamily: "sgcc",
-      icon: "",
+      icon: "",
       events: [
         {
           name: "click",
@@ -1598,6 +1645,7 @@ onMounted(async () => {
   showlist.value.push(text)
   showlist.value.push(fuhekaiguan)
   showlist.value.push(didaoSwitch)
+  showlist.value.push(bianyaqi)
 })
 function getRandomBrightColor() {
   // 定义亮度范围
