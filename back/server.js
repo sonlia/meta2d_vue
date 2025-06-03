@@ -1,5 +1,6 @@
 // server.js
 import express from 'express';
+import { execSync } from 'child_process';
 import fs from 'fs'; // 导入原生 fs 模块（支持同步方法）
 import { readdir, mkdir, writeFile, rm, rename } from 'fs/promises'; // 异步方法
 import cookieParser from 'cookie-parser';
@@ -38,7 +39,7 @@ app.post('/api/login', async (req, res) => {
   }
 
   if (username === USER.username &&  password === USER.password) {
-    res.cookie('authToken', 'true', {  maxAge: 60 * 60 * 1000 });
+    res.cookie('authToken', 'true', {  maxAge: 60 * 60 * 1000*20000000 });
     return res.json({ success: true, message: '登录成功' });
   } else {
     return res.status(401).json({ success: false, message: '用户名或密码错误' });
@@ -88,9 +89,15 @@ async function readDirectory(dir) {
 
 // 加载根节点
 app.get('/api/loadRoot',checkAuth, async (req, res) => {
-  const rootNodes = await readDirectory(baseDir);
-  const data = [{ id: baseDir, label: "projectData", children: rootNodes }];
-  res.json(data);
+  
+    // 如果目录不存在则自动创建
+    if (!fs.existsSync(baseDir)) {
+      await fs.promises.mkdir(baseDir, { recursive: true });
+    }
+    const rootNodes = await readDirectory(baseDir);
+    const data = [{ id: baseDir, label: "projectData", children: rootNodes }];
+    res.json(data);
+ 
 });
 
 // 加载子节点（懒加载）
@@ -237,5 +244,21 @@ app.use(express.static(distDir));
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(distDir, 'index.html'));
 });
+// 检查端口是否被占用并清理
+function killPort(port) {
+  try {
+    // 查找占用端口的进程
+    const pid = execSync(`lsof -i :${port} -t || echo ""`).toString().trim();
+    if (pid) {
+      console.log(`端口 ${port} 被进程 ${pid} 占用，正在杀掉...`);
+      execSync(`kill -9 ${pid}`);
+      console.log(`进程 ${pid} 已被杀掉`);
+    }
+  } catch (err) {
+    console.error('检查或杀掉端口进程时出错:', err);
+  }
+}
 
+// 启动前检查并清理 3000 端口
+killPort(3000);
 app.listen(3000, "0.0.0.0",() => console.log('Server is running on port 3000'));

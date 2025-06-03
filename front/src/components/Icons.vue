@@ -10,9 +10,9 @@ import { currentSelect,  lockStatus, switchChangHistory,openFile } from "../data
 const activeName = ref("filelist")
 let iconList = reactive([...defaultIcons])
 const filePath = ref()
-watch(iconList, (x) => console.log(x, "fefe"))
+ 
 
-const showlist = ref([])
+let showList = computed(()=>iconList.filter((i)=>i.show))
 const handleClick = (name, event) => {
   console.log(name, "eee")
 }
@@ -21,6 +21,7 @@ onMounted(async () => {
 
   const icons = await getOtherIcons()
   iconList.push(...icons.flat(2))
+  console.log(iconList,"fefe")
   const saveAsComponent = () => {
     const Re = meta2d.canvas.getAllByPens(meta2d.store.active)
     ie.componentDatas = meta2d.toComponent(Re, meta2d.store.data.showChild, !1)
@@ -1638,14 +1639,14 @@ onMounted(async () => {
       ],
     },
   }
-  showlist.value.push(loadSwitch)
-  showlist.value.push(circuitBreakerSwitch)
-  showlist.value.push(busBar)
-  showlist.value.push(power)
-  showlist.value.push(text)
-  showlist.value.push(fuhekaiguan)
-  showlist.value.push(didaoSwitch)
-  showlist.value.push(bianyaqi)
+  // iconList.push(loadSwitch)
+  // iconList.push(circuitBreakerSwitch)
+  // iconList.push(busBar)
+  // iconList.push(power)
+  // iconList.push(text)
+  // iconList.push(fuhekaiguan)
+  // iconList.push(didaoSwitch)
+  // iconList.push(bianyaqi)
 })
 function getRandomBrightColor() {
   // 定义亮度范围
@@ -1815,33 +1816,66 @@ const getCurrentSelect = async (data) => {
 await openFile(currentSelect.value)
 
 }
+async function  changeState(tab){
+  if(tab.folder){
+    if(!tab.loaded){
+      const {data:files} = await axios.get((tab.svg?"/svg/":"/png/")+tab.name+"/")
+      tab.loaded = true
+      if(tab.svg){
+       const fs =  await Promise.all(files.map((f)=>svgToPens(f,tab.name)))
+        tab.list = fs
+      }else{
+        const fs = await Promise.all(files.map((f)=>pngToPens(f,tab.name)))
+        tab.list = fs
+      }
+    }
+  }
+}
+let searchList = reactive([])
+function doSearch(value){
+  value = value.trim()  // 清除空格
+  searchList = []  // 重置表格
+  if(value){  // 输入有值
+    // 遍历搜索
+    showList.value.forEach((item)=>{
+      searchList.push(...item.list.filter((i)=>i.name.includes(value)))
+    })
+  }else {
+    searchList = []  //设置为空
+  }
+}
 </script>
 
 <template>
+ 
   <el-tabs v-model="activeName" class="icons" @tab-click="handleClick">
     <el-tab-pane label="工程列表" name="filelist">
       <projecMange @node-click="getCurrentSelect" />
     </el-tab-pane>
 
-    <el-tab-pane label="图元列表" class="tablist" name="iconlist">
-      <div
-        class="icon_item"
-        v-for="(item, index) in showlist"
-        draggable="true"
-        :key="index"
-        @dragstart="dragPen(item.data, $event)"
-        @click.stop="onTouchstart(item.data, $data)"
-        :index="index"
-        :title="item.name"
-      >
-        <!--              这里做了修改-->
-        <i v-if="item.tag == 'icon'" aria-hidden="true" :class="['l-icon', 'sgcc', item.icon]" style="font-size: 30px" />
-        <svg v-if="item.tag == 'aa'" class="l-icon" aria-hidden="true">
-          <use :xlink:href="'#' + item.icon"></use>
-        </svg>
-        <img v-if="item.tag == 'image'" :src="item.image" />
-        <div v-if="item.tag == 'svg'" v-html="item.svg"></div></div
-    ></el-tab-pane>
+    <el-tab-pane label="图元列表" class="tablist " name="iconlist">
+      <div class="icon_list">
+      <el-collapse>
+        <template v-for="(icons) in showList">
+        <el-collapse-item :title="icons.name" @click="changeState(icons)">
+          <div class="icon_container">
+            <div class="icon_item" v-for="(item,index) in icons.list" draggable="true"
+                 @dragstart="dragPen(item.data,$event)"
+                 @click.stop="onTouchstart(item.data, $data)"
+
+                 :index="index" :title="item.name">
+<!--              这里做了修改-->
+              <svg v-if="item.icon" class="l-icon" aria-hidden="true">
+                <use :xlink:href="'#' + item.icon"></use>
+              </svg>
+              <img v-else-if="item.image" :src="item.image"/>
+              <div v-else-if="item.svg" v-html="item.svg"></div>
+            </div>
+          </div>
+        </el-collapse-item>
+        </template>
+      </el-collapse>
+    </div></el-tab-pane>
   </el-tabs>
 </template>
 
@@ -1874,8 +1908,11 @@ img {
 
 .icon_list {
   padding: 5px 10px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  max-height: 600px; /* 可根据实际UI调整 */
+  min-height: 200px;
 }
 
 .icon_manage {

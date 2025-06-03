@@ -1965,15 +1965,15 @@ async function addIcons(url){
       data.glyphs.map((item) =>
        iconGroup.list.push({  // 侧边栏信息
            name: item.name,
-           icon:  // 侧边栏目显示
-               data.css_prefix_text +
-               item.font_class,
+           icon:             data.font_family + " " + data.css_prefix_text + item.font_class,
+        
            data: {   // 配置图元信息
                width: 100,
                height: 100,
                name: 'icon', // 指定为icon类型
                iconFamily: data.font_family, // 字体图标配置
                icon: String.fromCharCode(item.unicode_decimal),  // 字体图标
+               iconFont:true
            },
        })
    )
@@ -2018,7 +2018,7 @@ async function getPngs(){
                 list:[],  // 进行懒加载 暂时不获取文件内容
                 folder:true,  // 标记为文件夹 懒加载时进行处理
                 show:true,
-                svg:false, // 标记为png文件
+                png:true, // 标记为png文件
                 loaded:false
             })
         }
@@ -2111,10 +2111,10 @@ function getFileName(name){
 }
 
 export async function pngToPens(f,dName){
-    name = getFileName(f.name)
+    dName = getFileName(f.name)
     const image = "/png/"+dName+"/"+f.name
     return {
-        name,
+        dName,
         image
     }
 }
