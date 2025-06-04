@@ -118,10 +118,7 @@ export const menu = {
       name: "文件",
       icon: "",
       children: [
-        {
-          name: "新建文件",
-          action: "newFile",
-        },
+  
         {
           name: "打开文件",
           action: "openFile",
@@ -140,11 +137,7 @@ export const menu = {
           action: "saveAs",
           value: "png",
         },
-        {
-          name: "用户退出",
-          action: "handleLogout",
-         
-        },
+ 
       ],
     },
 
@@ -491,21 +484,7 @@ const menuFunc = {
         alert(response.data.message || "保存错误.")
       }
     },
-    // 注销逻辑
-  async handleLogout () {
-  try {
-    
-    const response = await axios.post('/api/logout');
-
-    if (response.data.success) {
-      ElMessage.success('注销成功');
-      
-      router.push('/login'); // 跳转到登录页
-    }
-  } catch (error) {
-    ElMessage.error('注销失败，请稍后再试');
-  }
-},
+ 
     saveFile() {
       const jsonData = window.meta2d.data() // 获取数据 数据怎么来？怎么处理？
       const json = JSON.stringify(jsonData)

@@ -8,7 +8,7 @@ import axios from "axios"
 import { deepClone } from "@meta2d/core"
 import { currentSelect,  lockStatus, switchChangHistory,openFile } from "../data/defaultsConfig.js"
 const activeName = ref("filelist")
-let iconList = reactive([...defaultIcons])
+let iconList = reactive([])
 const filePath = ref()
  
 
@@ -21,6 +21,7 @@ onMounted(async () => {
 
   const icons = await getOtherIcons()
   iconList.push(...icons.flat(2))
+  iconList.push(...defaultIcons)
   console.log(iconList,"fefe")
   const saveAsComponent = () => {
     const Re = meta2d.canvas.getAllByPens(meta2d.store.active)
@@ -1817,6 +1818,7 @@ await openFile(currentSelect.value)
 
 }
 async function  changeState(tab){
+  console.log(tab)
   if(tab.folder){
     if(!tab.loaded){
       const {data:files} = await axios.get((tab.svg?"/svg/":"/png/")+tab.name+"/")
@@ -1857,15 +1859,15 @@ function doSearch(value){
       <div class="icon_list">
       <el-collapse>
         <template v-for="(icons) in showList">
-        <el-collapse-item :title="icons.name" @click="changeState(icons)">
+        <el-collapse-item :title="icons.name" @click="()=>changeState(icons)">
           <div class="icon_container">
             <div class="icon_item" v-for="(item,index) in icons.list" draggable="true"
                  @dragstart="dragPen(item.data,$event)"
                  @click.stop="onTouchstart(item.data, $data)"
 
                  :index="index" :title="item.name">
-<!--              这里做了修改-->
-              <svg v-if="item.icon" class="l-icon" aria-hidden="true">
+ <i v-if="item.type =='icon'" class="l-icon" :class="item.icon"></i>
+              <svg v-else-if="item.icon" class="l-icon" aria-hidden="true">
                 <use :xlink:href="'#' + item.icon"></use>
               </svg>
               <img v-else-if="item.image" :src="item.image"/>

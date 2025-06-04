@@ -1966,7 +1966,7 @@ async function addIcons(url){
        iconGroup.list.push({  // 侧边栏信息
            name: item.name,
            icon:             data.font_family + " " + data.css_prefix_text + item.font_class,
-        
+           type: "icon",
            data: {   // 配置图元信息
                width: 100,
                height: 100,
