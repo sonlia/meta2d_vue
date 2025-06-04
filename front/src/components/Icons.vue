@@ -10,7 +10,7 @@ import { currentSelect,  lockStatus, switchChangHistory,openFile } from "../data
 const activeName = ref("filelist")
 let iconList = reactive([])
 const filePath = ref()
- 
+const inputValue = ref("")
 
 let showList = computed(()=>iconList.filter((i)=>i.show))
 const handleClick = (name, event) => {
@@ -1845,28 +1845,54 @@ function doSearch(value){
   }else {
     searchList = []  //设置为空
   }
-}
+ }
 </script>
 
 <template>
- 
-  <el-tabs v-model="activeName" class="icons" @tab-click="handleClick">
+ <el-tabs v-model="activeName" class="icons" @tab-click="handleClick">
     <el-tab-pane label="工程列表" name="filelist">
       <projecMange @node-click="getCurrentSelect" />
     </el-tab-pane>
 
     <el-tab-pane label="图元列表" class="tablist " name="iconlist">
-      <div class="icon_list">
+
+  
+
+<div class="icons">
+    <div class="icon_search">
+      <el-input
+          v-model="inputValue"
+          size="small"
+          placeholder="搜索图元"
+          :prefix-icon="Search"
+          @input="doSearch"
+          class="search_input"
+          clearable 
+       />
+      
+      <div class="icon_search_container">
+        <div class="icon_item" v-for="(item,index) in searchList" draggable="true" @dragstart="dragPen(item.data,$event)" :index="index" :title="item.name">
+          <i v-if="item.type =='icon'" class="l-icon" :class="item.icon"></i>
+              <svg v-else-if="item.icon" class="l-icon" aria-hidden="true">
+                <use :xlink:href="'#' + item.icon"></use>
+              </svg>
+          <img v-else-if="item.image" :src="item.image"  />
+          <div v-else-if="item.svg" v-html="item.svg"></div>
+        </div>
+      </div>
+    </div>
+    <div class="icon_list">
       <el-collapse>
         <template v-for="(icons) in showList">
-        <el-collapse-item :title="icons.name" @click="()=>changeState(icons)">
+        <el-collapse-item :title="icons.name" @click="changeState(icons)">
           <div class="icon_container">
             <div class="icon_item" v-for="(item,index) in icons.list" draggable="true"
                  @dragstart="dragPen(item.data,$event)"
                  @click.stop="onTouchstart(item.data, $data)"
 
                  :index="index" :title="item.name">
- <i v-if="item.type =='icon'" class="l-icon" :class="item.icon"></i>
+<!--              这里做了修改-->
+              <i v-if="item.type =='icon'" class="l-icon" :class="item.icon"></i>
               <svg v-else-if="item.icon" class="l-icon" aria-hidden="true">
                 <use :xlink:href="'#' + item.icon"></use>
               </svg>
@@ -1877,8 +1903,23 @@ function doSearch(value){
         </el-collapse-item>
         </template>
       </el-collapse>
-    </div></el-tab-pane>
-  </el-tabs>
+    </div>
+    <div class="icon_manage">
+      <el-button @click="dialogTableVisible = !dialogTableVisible">
+        管理图元
+      </el-button>
+    </div>
+  </div>
+  <el-dialog v-model="dialogTableVisible" title="图元库管理" center align-center>
+    <div class="icon_manage_container">
+      <div class="icon_manage_item" v-for="item in iconList">
+        <el-switch v-model="item.show" />{{item.name}}
+      </div>
+    </div>
+  </el-dialog>
+
+</el-tab-pane>
+</el-tabs>
 </template>
 
 <style scoped>
