@@ -3,7 +3,9 @@ import {computed, onMounted, reactive, ref} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
 let isPens = ref(false)
 let ctxMenu = ref()
-let activePens = []
+let activePens = ref([])
+let isGroup = ref(false)
+let isCombine = ref(false)
 
 let menuPos = reactive({
   top:-9999,
@@ -33,11 +35,20 @@ eventBus.customOn('load',()=>{
   })
   meta2d.on("active",(pens)=>{
     if(pens.length>0){
-      activePens = reactive(pens)
+      activePens.value = pens
       isPens.value = true
+      if(pens.length === 1 && pens[0].name === 'combine') {
+        isGroup.value = true
+        isCombine.value = true
+      } else {
+        isGroup.value = false
+        isCombine.value = false
+      }
     }else {
       isPens.value = false
-      activePens = []
+      isGroup.value = false
+      isCombine.value = false
+      activePens.value = []
     }
   })
   meta2d.on('inactive',()=>{
@@ -47,16 +58,16 @@ eventBus.customOn('load',()=>{
 function changeCoverage(pos){
   switch (pos){
     case "top":
-      meta2d.top(activePens)
+      meta2d.top(activePens.value)
       break
     case "bottom":
-      meta2d.bottom(activePens)
+      meta2d.bottom(activePens.value)
       break
     case "up":
-      meta2d.up(activePens)
+      meta2d.up(activePens.value)
       break
     case "down":
-      meta2d.down(activePens)
+      meta2d.down(activePens.value)
       break
   }
   ctxMenu.value.blur()
@@ -73,12 +84,79 @@ function paste() {
   ctxMenu.value.blur()
 }
 function copy() {
-  meta2d.copy(activePens)
+  meta2d.copy(activePens.value)
   ctxMenu.value.blur()
 }
 
 function ctxMenuClose() {
   menuPos.visible = false
+}
+
+function group() {
+  if(activePens.value.length > 1) {
+    meta2d.combine(activePens.value)
+    ctxMenu.value.blur()
+  }
+}
+
+function unGroup() {
+  if(activePens.value.length === 1 && activePens.value[0].name === 'combine') {
+    meta2d.uncombine(activePens.value[0])
+    ctxMenu.value.blur()
+  }
+}
+
+function combine() {
+  if(activePens.value.length > 1) {
+    meta2d.combine(activePens.value, 0)
+    ctxMenu.value.blur()
+  }
+}
+
+const isAppendToCombineVisible = computed(() => {
+  const pens = activePens.value
+  if (pens.length < 2) return false;
+  const stateCombinePens = pens.filter(
+    (p) => p.name === 'combine' && typeof p.showChild === 'number'
+  );
+  return (stateCombinePens.length === 1);
+});
+
+function appendToCombine() {
+  meta2d.active(activePens.value);
+  meta2d.appendChild();
+  ctxMenu.value.blur();
+}
+
+function clearCombine() {
+  // 递归清除组合
+  // 如果传入参数，优先用参数，否则用当前选中的组合
+  let pen = activePens.value.length === 1 ? activePens.value[0] : null;
+  if (!pen || pen.name !== 'combine') {
+    ctxMenu.value.blur();
+    return;
+  }
+  // 调用 meta2d.clearCombine，如果有该API，否则递归uncombine
+  if (typeof meta2d.clearCombine === 'function') {
+    meta2d.clearCombine(pen);
+  } else {
+    // 递归解组
+    function recursiveUncombine(p) {
+      if (p && p.name === 'combine' && Array.isArray(p.children)) {
+        // 先对子组合递归
+        for (const childId of p.children) {
+          const child = meta2d.findOne(childId);
+          if (child && child.name === 'combine') {
+            recursiveUncombine(child);
+          }
+        }
+        // 解除当前组合
+        meta2d.uncombine(p);
+      }
+    }
+    recursiveUncombine(pen);
+  }
+  ctxMenu.value.blur();
 }
 
 </script>
@@ -92,6 +170,11 @@ function ctxMenuClose() {
     <div class="ctx_item" @click="lock">锁定</div>
     <div class="ctx_item" v-show="isPens" @click="copy">复制</div>
     <div class="ctx_item" @click="paste">粘贴</div>
+    <div class="ctx_item" v-show="isPens && activePens.length > 1" @click="group">组合</div>
+    <div class="ctx_item" v-show="isGroup" @click="unGroup">取消组合</div>
+    <div class="ctx_item" v-show="isPens && activePens.length > 1" @click="combine">组合为状态</div>
+    <div class="ctx_item"  v-show="isAppendToCombineVisible" @click="appendToCombine">追加到组合</div>
+    <div class="ctx_item" v-show="isGroup" @click="clearCombine">递归取消组合</div>
   </div>
 </template>
 
