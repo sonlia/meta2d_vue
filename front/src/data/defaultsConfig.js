@@ -141,18 +141,7 @@ export const menu = {
       ],
     },
 
-    {
-      key: "magnifier",
-      name: "放大镜",
-      icon: "",
-      action: "openMagnifier",
-    },
-    {
-      key: "map",
-      name: "缩略图",
-      icon: "",
-      action: "openMap",
-    },
+    
     {
       key: "pen",
       name: "钢笔",
@@ -353,23 +342,43 @@ export const menu = {
         },
       ],
     },
+    
     {
-      key: "manual",
-      name: "手动锚点",
+      key: "setting",
+      name: "设置",
       icon: "",
-      action: "manual",
-    },
-    {
-      key: "grid",
-      name: "网格",
-      icon: "",
-      action: "grid",
-    },
-    {
-      key: "rule",
-      name: "标尺",
-      icon: "",
-      action: "rule",
+      children: [
+        {
+          key: "magnifier",
+          name: "放大镜",
+          icon: "",
+          action: "openMagnifier",
+        },
+        {
+          key: "map",
+          name: "缩略图",
+          icon: "",
+          action: "openMap",
+        },
+        {
+          key: "manual",
+          name: "手动锚点",
+          icon: "",
+          action: "manual",
+        },
+        {
+          key: "grid",
+          name: "网格",
+          icon: "",
+          action: "grid",
+        },
+        {
+          key: "rule",
+          name: "标尺",
+          icon: "",
+          action: "rule",
+        },
+      ],
     },
   ],
 }
@@ -517,7 +526,7 @@ const menuFunc = {
         window.meta2d.drawLine()
         window.meta2d.finishPencil()
       } else {
-        window.meta2d.drawLine("curve")
+        window.meta2d.drawLine("line")
       }
     },
     usePencil() {
