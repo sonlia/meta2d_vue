@@ -1904,19 +1904,9 @@ function doSearch(value){
         </template>
       </el-collapse>
     </div>
-    <div class="icon_manage">
-      <el-button @click="dialogTableVisible = !dialogTableVisible">
-        管理图元
-      </el-button>
-    </div>
+ 
   </div>
-  <el-dialog v-model="dialogTableVisible" title="图元库管理" center align-center>
-    <div class="icon_manage_container">
-      <div class="icon_manage_item" v-for="item in iconList">
-        <el-switch v-model="item.show" />{{item.name}}
-      </div>
-    </div>
-  </el-dialog>
+ 
 
 </el-tab-pane>
 </el-tabs>

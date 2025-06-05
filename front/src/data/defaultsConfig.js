@@ -944,6 +944,32 @@ export const eventBehavior = [
       },
     ],
   },
+  {
+    name: "执行js",
+    behavior: EventAction.JS,
+    depend: [
+      {
+        name: "js",
+        type: "editor",
+        bindProp: "value",
+ 
+        bindData: "",
+      },
+    ],
+  },
+  {
+    name: "执行全局js",
+    behavior: EventAction.GlobalFn,
+    depend: [
+      {
+        name: "全结局js函数",
+        type: "input",
+        bindProp: "value",
+ 
+        bindData: "",
+      },
+    ],
+  },
 ]
 
 export const animateType = [

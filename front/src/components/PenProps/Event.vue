@@ -15,6 +15,10 @@ let depList = computed(()=>{
   return _b
 })
 let b = reactive(eventBehavior)
+const showJsEditor = ref(false);
+const jsEditorValue = ref('');
+let currentDep = null;
+
 onMounted(()=>{
   meta2d.on('active',(pen)=>{
     if(pen.length === 1){
@@ -28,6 +32,7 @@ onMounted(()=>{
           event.name = actEvent.name
           event.action = actEvent.action
           otherParams.forEach(i=>event[i]=actEvent[i])
+          event.value = actEvent.value
         }else {
           event.name = ""
           event.action = ""
@@ -47,19 +52,38 @@ function removeEvent() {
 
 }
 function confirmEvent() {
-  let otherProps = depList.value.depend?.map(i=>{
-    let p = {}
-    p[i.bindProp] = i.bindData
-    return p
-  }
-  ) || []
+  let otherProps = depList.value.depend?.map(i => {
+    let p = {};
+    p[i.bindProp] = i.bindData;
+    return p;
+  }) || [];
   const e = {
-    name:event.name,
-    action:event.action,
+    name: event.name,
+    action: event.action,
+    value: event.value // 确保 value 字段存储 js 代码
+  };
+  Object.assign(e, ...otherProps);
+  activePen.events = [e];
+  // 新增：同步到 meta2d 数据模型
+  if (window.meta2d && activePen.id) {
+    window.meta2d.setValue({ id: activePen.id, events: activePen.events });
   }
-  Object.assign(e,...otherProps)
-  activePen.events = [e]
 }
+
+function openJsEditor(dep) {
+  // 优先读取 event.value 作为 js 代码
+  let jsVal = '';
+  if (dep.bindProp === 'value') {
+    jsVal = event.value || '';
+  } else {
+    jsVal = dep.bindData || '';
+  }
+  jsEditorValue.value = jsVal;
+  currentDep = dep;
+  showJsEditor.value = true;
+}
+
+ 
 </script>
 
 <template>
@@ -104,6 +128,10 @@ function confirmEvent() {
             >
             </el-option>
           </el-select>
+          <el-button  v-else-if="dep.type === 'button'" @[dep.event]="dep.func" :style="dep.middle?'width:100%;margin: auto;':''">{{dep.option.title}}</el-button>
+          <!-- editor   类型都渲染为按钮并弹窗 -->
+          <el-button v-else-if="dep.type === 'editor'" @click="openJsEditor(dep)" :style="dep.middle?'width:100%;margin: auto;':''">{{dep.option?.title || '打开编辑器'}}</el-button>
+
         </el-form-item>
 
 
@@ -114,6 +142,17 @@ function confirmEvent() {
 
         </div>
       </el-form>
+
+      <!-- JS编辑器弹窗 -->
+      <el-dialog v-model="showJsEditor" title="编辑JS代码" width="600px">
+        <el-input
+          v-model="jsEditorValue"
+          type="textarea"
+          :rows="10"
+          placeholder="请输入JS代码"
+        />
+ 
+      </el-dialog>
   </div>
 </template>
 
