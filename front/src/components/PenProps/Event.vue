@@ -17,6 +17,8 @@ let depList = computed(()=>{
 let b = reactive(eventBehavior)
 const showJsEditor = ref(false);
 const jsEditorValue = ref('');
+const showGlobalJsEditor = ref(false);
+const globalJsValue = ref('');
 let currentDep = null;
 
 onMounted(()=>{
@@ -43,6 +45,10 @@ onMounted(()=>{
       activePen = undefined
     }
   })
+  // 加载全局js
+  if (window.meta2d && window.meta2d.store && window.meta2d.store.globalJs) {
+    globalJsValue.value = window.meta2d.store.globalJs;
+  }
 })
 function removeEvent() {
   activePen.events = []
@@ -83,11 +89,29 @@ function openJsEditor(dep) {
   showJsEditor.value = true;
 }
 
- 
+function openGlobalJsEditor() {
+  // 读取全局js
+  if (window.meta2d && window.meta2d.store && window.meta2d.store.globalJs) {
+    globalJsValue.value = window.meta2d.store.globalJs;
+  } else {
+    globalJsValue.value = '';
+  }
+  showGlobalJsEditor.value = true;
+}
+
+function saveGlobalJs() {
+  if (window.meta2d && window.meta2d.store) {
+    window.meta2d.store.globalJs = globalJsValue.value;
+  }
+  showGlobalJsEditor.value = false;
+}
+
 </script>
 
 <template>
   <div class="event">
+      <!-- 全局JS按钮 -->
+      <el-button type="warning" style="width:100%;margin-bottom:12px" @click="openGlobalJsEditor">全局JS</el-button>
       <el-form @submit="(e)=>e.preventDefault()">
         <el-form-item label="事件类型" >
           <el-select v-model="event.name" placeholder="选择事件类型" >
@@ -152,6 +176,20 @@ function openJsEditor(dep) {
           placeholder="请输入JS代码"
         />
  
+      </el-dialog>
+
+      <!-- 全局JS编辑器弹窗 -->
+      <el-dialog v-model="showGlobalJsEditor" title="全局JS代码" width="600px">
+        <el-input
+          v-model="globalJsValue"
+          type="textarea"
+          :rows="10"
+          placeholder="请输入全局JS代码"
+        />
+        <template #footer>
+          <el-button @click="showGlobalJsEditor = false">取消</el-button>
+          <el-button type="primary" @click="saveGlobalJs">保存</el-button>
+        </template>
       </el-dialog>
   </div>
 </template>
