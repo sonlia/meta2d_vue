@@ -5,6 +5,7 @@ import Global from "./MapProps/Global.vue";
 import Appearance from "./PenProps/Appearance.vue";
 import Event from "./PenProps/Event.vue";
 import Animate from "./PenProps/Animate.vue";
+import Data from "./PenProps/Data.vue";
 const props = defineProps(['activeType'])
 let activeName1 = ref('map')
 let activeName2 = ref('appearance')
@@ -42,12 +43,19 @@ onMounted(()=>{
       </el-tabs>
     </div>
 
-    <div class="ty_props " v-show="activePen && !multiPen">
+    <div class="ty_props" v-show="activePen && !multiPen">
       <el-tabs v-model="activeName2" class="demo-tabs">
-        <el-tab-pane  name="appearance" >
+        <el-tab-pane label="外观" name="appearance" >
           <Appearance></Appearance>
         </el-tab-pane>
-   
+        <el-tab-pane label="事件" name="event" >
+          <Event></Event>
+        </el-tab-pane>
+        <el-tab-pane label="动效" name="animate">
+          <Animate></Animate></el-tab-pane>
+          <el-tab-pane label="数据" name="data" >
+          <Data></Data>
+        </el-tab-pane>
       </el-tabs>
     </div>
 
