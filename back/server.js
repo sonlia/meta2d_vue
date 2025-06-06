@@ -6,6 +6,8 @@ import { readdir, mkdir, writeFile, rm, rename } from 'fs/promises'; // 异步�
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
+import compression from 'compression';
+import bodyParser from 'body-parser';
  
 const app = express();
 app.use(cors({
@@ -13,10 +15,10 @@ app.use(cors({
   origin: 'http://localhost:8080' // 前端地址
 }));
 app.use(express.json());
-
-
-
 app.use(cookieParser()); // 解析 Cookie
+app.use(compression());
+app.use(bodyParser.json({ limit: '20mb' }));
+app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 
 // 单用户数据
 // 模拟用户数据
@@ -235,6 +237,97 @@ app.post('/api/readFile', checkAuth,async (req, res) => {
     res.json({ success: false, message: err.message });
   }
 });
+
+
+
+
+// ========== 独立文件存储的自定义图元接口 =============
+const iconsDir =   './custom' ;
+const ensureIconsDir = async () => {
+  if (!fs.existsSync(iconsDir)) {
+    await fs.promises.mkdir(iconsDir, { recursive: true });
+  }
+};
+
+// 获取自定义图元列表
+app.get('/api/customIcons/list', checkAuth, async (req, res) => {
+  await ensureIconsDir();
+  const files = await fs.promises.readdir(iconsDir);
+  const list = [];
+  for (const file of files) {
+    if (file.endsWith('.json')) {
+      const content = await fs.promises.readFile(path.join(iconsDir, file), 'utf8');
+      try {
+        list.push(JSON.parse(content));
+      } catch (e) {
+          // skip invalid json
+      }
+    }
+  }
+  console.log(list,"list",files)
+  res.json({ success: true, list });
+});
+
+// 新增自定义图元（或覆盖）
+app.post('/api/customIcons/save', checkAuth, async (req, res) => {
+  const { data } = req.body;
+  await ensureIconsDir();
+  if (!data || !data.name) {
+    return res.json({ success: false, message: '缺少name' });
+  }
+  const filePath = path.join(iconsDir, `${data.name}.json`);
+  await fs.promises.writeFile(filePath, JSON.stringify(  data , null, 2), 'utf8');
+  res.json({ success: true, id: data.name });
+});
+
+// 删除自定义图元
+app.post('/api/customIcons/delete', checkAuth, async (req, res) => {
+  const { id } = req.body;
+  await ensureIconsDir();
+  const filePath = path.join(iconsDir, `${id}.json`);
+  if (fs.existsSync(filePath)) {
+    await fs.promises.rm(filePath);
+    res.json({ success: true });
+  } else {
+    res.json({ success: false, message: '文件不存在' });
+  }
+});
+
+// 重命名自定义图元（文件名和内容name都要改）
+app.post('/api/customIcons/rename', checkAuth, async (req, res) => {
+  const { id, newName } = req.body;
+  await ensureIconsDir();
+  const oldPath = path.join(iconsDir, `${id}.json`);
+  const newPath = path.join(iconsDir, `${newName}.json`);
+  if (!fs.existsSync(oldPath)) {
+    return res.json({ success: false, message: '原文件不存在' });
+  }
+  const content = await fs.promises.readFile(oldPath, 'utf8');
+  let obj = JSON.parse(content);
+  obj.id = newName;
+  if (obj.data) obj.data.name = newName;
+  await fs.promises.writeFile(newPath, JSON.stringify(obj, null, 2), 'utf8');
+  await fs.promises.rm(oldPath);
+  res.json({ success: true });
+});
+
+// 编辑自定义图元数据
+app.post('/api/customIcons/edit', checkAuth, async (req, res) => {
+  const {  data } = req.body;
+  await ensureIconsDir();
+  const filePath = path.join(iconsDir, `${data.name}.json`);
+  if (!fs.existsSync(filePath)) {
+    return res.json({ success: false, message: '文件不存在' });
+  }
+   
+  await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+  res.json({ success: true });
+});
+
+
+
+
+
 
 
 const distDir = path.join("../front", 'dist');
