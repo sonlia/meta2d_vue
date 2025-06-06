@@ -1,7 +1,7 @@
 <script setup>
 import {computed, onMounted, reactive, ref} from "vue";
 import {eventType, eventBehavior} from "../../data/defaultsConfig.js";
-
+import {EventAction}  from "@meta2d/core"
 let activePen = reactive({})
 let event = reactive({
   name:"",
@@ -59,13 +59,22 @@ function removeEvent() {
 }
 function confirmEvent() {
  
-  const e = {
-    name: event.name,
-    action: event.action,
-    value: event.value // 确保 value 字段存储 js 代码
+ const e={}
+ if(depList.value.name === "执行全局js"){
+ 
+    e.name= event.name
+    e.action= EventAction.GlobalFn
+    e.value= depList.value.depend[0].bindData // 确保 value 字段存储 js 代码
+  }else{
+    e.name= event.name
+    e.action= event.action
+    e.value= event.value // 确保 value 字段存储 js 代码
   };
  
-  activePen.events = [e];
+ 
+
+ 
+  activePen.events.push(e);
   
   // 新增：同步到 meta2d 数据模型
   if (window.meta2d && activePen.id) {
@@ -98,17 +107,20 @@ function openGlobalJsEditor() {
 }
 
 function saveGlobalJs() {
+event.action =  EventAction.GlobalFn
+ eval(globalJsValue.value)
   if (window.meta2d && window.meta2d.store) {
     window.meta2d.store.globalJs = globalJsValue.value;
   }
+  eval(globalJsValue.value)
   showGlobalJsEditor.value = false;
 }
 
 function onConfirm() {
 
-  
+ event.action = EventAction.JS
   event.value = jsEditorValue.value
-  console.log(event)
+  
   showJsEditor.value = false;
 }
 
@@ -192,7 +204,7 @@ function onCancel() {
       </el-dialog>
 
       <!-- 全局JS编辑器弹窗 -->
-      <el-dialog v-model="showGlobalJsEditor" title="全局JS代码" width="600px">
+      <el-dialog v-model="showGlobalJsEditor" title="全局JS代码(globalThis)" width="600px">
         <el-input
           v-model="globalJsValue"
           type="textarea"

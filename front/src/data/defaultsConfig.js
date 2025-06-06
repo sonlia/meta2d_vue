@@ -971,7 +971,7 @@ export const eventBehavior = [
     behavior: EventAction.GlobalFn,
     depend: [
       {
-        name: "全结局js函数",
+        name: "全局js函数",
         type: "input",
         bindProp: "value",
  
