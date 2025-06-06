@@ -58,18 +58,15 @@ function removeEvent() {
 
 }
 function confirmEvent() {
-  let otherProps = depList.value.depend?.map(i => {
-    let p = {};
-    p[i.bindProp] = i.bindData;
-    return p;
-  }) || [];
+ 
   const e = {
     name: event.name,
     action: event.action,
     value: event.value // 确保 value 字段存储 js 代码
   };
-  Object.assign(e, ...otherProps);
+ 
   activePen.events = [e];
+  
   // 新增：同步到 meta2d 数据模型
   if (window.meta2d && activePen.id) {
     window.meta2d.setValue({ id: activePen.id, events: activePen.events });
@@ -77,6 +74,7 @@ function confirmEvent() {
 }
 
 function openJsEditor(dep) {
+ 
   // 优先读取 event.value 作为 js 代码
   let jsVal = '';
   if (dep.bindProp === 'value') {
@@ -104,6 +102,18 @@ function saveGlobalJs() {
     window.meta2d.store.globalJs = globalJsValue.value;
   }
   showGlobalJsEditor.value = false;
+}
+
+function onConfirm() {
+
+  
+  event.value = jsEditorValue.value
+  console.log(event)
+  showJsEditor.value = false;
+}
+
+function onCancel() {
+  showJsEditor.value = false;
 }
 
 </script>
@@ -175,7 +185,10 @@ function saveGlobalJs() {
           :rows="10"
           placeholder="请输入JS代码"
         />
- 
+        <div style="text-align:center;margin-top:10px;">
+          <el-button type="primary" @click="onConfirm">确定</el-button>
+          <el-button @click="onCancel">取消</el-button>
+        </div>
       </el-dialog>
 
       <!-- 全局JS编辑器弹窗 -->
