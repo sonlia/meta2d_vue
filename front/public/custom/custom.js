@@ -742,59 +742,178 @@ const loadSwitch = {
   name: "断路器",
   icon: "sgcc sgcc-a-shouchekaiguanguan--_huaban1",
   type: "icon",
-  data: {
-    anchors: [
-      {
-        id: "0",
-        penId: "4dd58790",
-        x: 0.5,
-        y: 0,
-      },
-      {
-        id: "1",
-        penId: "4dd58790",
-        x: 1,
-        y: 0.5,
-      },
-      {
-        id: "2",
-        penId: "4dd58790",
-        x: 0.5,
-        y: 1,
-      },
-      {
-        id: "3",
-        penId: "4dd58790",
-        x: 0,
-        y: 0.5,
-      },
-    ],
-    center: {
-      x: 473.95238095238085,
-      y: 198.92380952380952,
+  data: [
+    {
+        "anchors": [
+            {
+                "id": "0",
+                "penId": "55bef82a",
+                "x": 0.5,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "penId": "55bef82a",
+                "x": 1,
+                "y": 0.5
+            },
+            {
+                "id": "2",
+                "penId": "55bef82a",
+                "x": 0.5,
+                "y": 1
+            },
+            {
+                "id": "3",
+                "penId": "55bef82a",
+                "x": 0,
+                "y": 0.5
+            }
+        ],
+        "center": {
+            "x": 228.5999999999999,
+            "y": 442.14285714285717
+        },
+        "children": [
+            "365c8da",
+            "b059964"
+        ],
+        "events": [
+            {
+                "action": 5,
+                "name": "click",
+                "value": "console.log(  context.meta2d.data())\r\nconst node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })\r\n\r\n",
+                "where": {
+                    "type": null
+                }
+            }
+        ],
+        "ex": 288.5999999999999,
+        "ey": 502.1428571428572,
+        "fontSize": 12,
+        "height": 120.00000000000003,
+        "id": "55bef82a",
+        "lineHeight": 1.5,
+        "lineWidth": 1,
+        "name": "combine",
+        "rotate": 0,
+        "showChild": 0,
+        "width": 120.00000000000003,
+        "x": 168.5999999999999,
+        "y": 382.14285714285717,
+        "componentId": "01948d77-0662-700a-9b80-340bc2fe4a9e",
+        "originId": "168de522",
+        "lineAnimateImages": []
     },
-    children: [],
-    color: "rgba(48, 238, 111, 1)",
-    disableAnchor: true,
-    ex: 1.0000000000000002,
-    ey: 1.0000000000000002,
-    fontSize: 12,
-    height: 1.0000000000000002,
-    icon: "",
-    iconFamily: "sgcc",
-    id: "4dd58790",
-    lineHeight: 1.5,
-    lineWidth: 1,
-    locked: 0,
-    name: "image",
-    parentId: "17fac50a",
-    rotate: 0,
-    visible: true,
-    width: 1.0000000000000002,
-    x: 0,
-    y: 0,
-    originId: "2f898e8",
-  },
+    {
+        "anchors": [
+            {
+                "id": "0",
+                "penId": "365c8da",
+                "x": 0.5,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "penId": "365c8da",
+                "x": 1,
+                "y": 0.5
+            },
+            {
+                "id": "2",
+                "penId": "365c8da",
+                "x": 0.5,
+                "y": 1
+            },
+            {
+                "id": "3",
+                "penId": "365c8da",
+                "x": 0,
+                "y": 0.5
+            }
+        ],
+        "center": {
+            "x": 473.95238095238085,
+            "y": 198.92380952380952
+        },
+        "children": [],
+        "color": "rgba(48, 238, 111, 1)",
+        "disableAnchor": true,
+        "ex": 1.0000000000000002,
+        "ey": 1.0000000000000002,
+        "fontSize": 12,
+        "height": 1.0000000000000002,
+        "icon": "",
+        "iconFamily": "sgcc",
+        "id": "365c8da",
+        "lineHeight": 1.5,
+        "lineWidth": 1,
+        "locked": 0,
+        "name": "image",
+        "parentId": "55bef82a",
+        "rotate": 0,
+        "visible": true,
+        "width": 1.0000000000000002,
+        "x": 0,
+        "y": 0,
+        "originId": "2f898e8",
+        "lineAnimateImages": []
+    },
+    {
+        "anchors": [
+            {
+                "id": "0",
+                "penId": "b059964",
+                "x": 0.5,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "penId": "b059964",
+                "x": 1,
+                "y": 0.5
+            },
+            {
+                "id": "2",
+                "penId": "b059964",
+                "x": 0.5,
+                "y": 1
+            },
+            {
+                "id": "3",
+                "penId": "b059964",
+                "x": 0,
+                "y": 0.5
+            }
+        ],
+        "center": {
+            "x": 473.95238095238085,
+            "y": 198.92380952380952
+        },
+        "children": [],
+        "color": "rgba(255, 89, 89, 1)",
+        "disableAnchor": true,
+        "ex": 1.0000000000000002,
+        "ey": 1.0000000000000002,
+        "fontSize": 12,
+        "height": 1.0000000000000002,
+        "icon": "",
+        "iconFamily": "sgcc",
+        "id": "b059964",
+        "lineHeight": 1.5,
+        "lineWidth": 1,
+        "locked": 0,
+        "name": "image",
+        "parentId": "55bef82a",
+        "rotate": 0,
+        "visible": true,
+        "width": 1.0000000000000002,
+        "x": 0,
+        "y": 0,
+        "originId": "5f986060",
+        "lineAnimateImages": []
+    }
+]
 };
 // 母线
 const busBar = {

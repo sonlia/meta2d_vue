@@ -28,8 +28,7 @@ const USER = {
 };
 
 
-// 登录状态（简单模拟）
-let isAuthenticated = false;
+ 
 
 // 用户登录接口
 
@@ -264,8 +263,7 @@ app.get('/api/customIcons/list', checkAuth, async (req, res) => {
       }
     }
   }
-  console.log(list,"list",files)
-  res.json({ success: true, list });
+   res.json({ success: true, list });
 });
 
 // 新增自定义图元（或覆盖）
