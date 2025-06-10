@@ -1,3 +1,4 @@
+import {parseSvg} from "@meta2d/svg";
 const bianyaqi = {
   tag: "icon",
   name: "变压器",
@@ -46,6 +47,24 @@ const bianyaqi = {
   },
 };
 
+const user = {
+  tag: "icon",
+  name: "用户",
+ 
+  svg: `<svg t="用户图标" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1001" width="25" height="25"><path d="M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z" fill="#333"/></svg>`,
+
+  data:{
+    name: "svgPath",
+    x: 100,
+    y: 100,
+    width: 100,
+    height: 100,
+ 
+    path: "M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z"
+,
+  },
+};
+console.log(user.data[0]);
 const didaoSwitch = {
   tag: "icon",
   name: "地刀",
@@ -1757,5 +1776,5 @@ export const customData = {
   loaded: true,
   name: "常用图元",
   show: true,
-  list: [power, busBar, fuhekaiguan,circuitBreakerSwitch, loadSwitch,didaoSwitch,bianyaqi],
+  list: [power, busBar, fuhekaiguan,circuitBreakerSwitch, loadSwitch,didaoSwitch,bianyaqi,user],
 };
