@@ -64,7 +64,6 @@ const user = {
 ,
   },
 };
-console.log(user.data[0]);
 const didaoSwitch = {
   tag: "icon",
   name: "地刀",
