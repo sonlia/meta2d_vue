@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 通用准则
+## 编码规范
+### 语言
+- 回复使用中文。
+### 模块引用
+- 必须使用相对引用路径，包含完整文件扩展名（如：`import Component from '../components/Component.vue'`）。
+- 所有JavaScript文件使用最新ES模块语法。
+### 数据访问
+- **简单对象属性**：使用可选链操作符（`?.`）。
+- **复杂嵌套对象**：使用`lodash-es`的`get`方法。
+### 后端规范
+- 使用`express`框架。
+#### 核心库
+- **Web框架**：Express.js
+- **数据库ORM**：Knex.js

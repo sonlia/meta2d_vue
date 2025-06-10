@@ -1593,6 +1593,166 @@ const power = {
     ],
   },
 };
+
+function getRandomBrightColor() {
+    // 定义亮度范围
+    const highBrightness = { min: 200, max: 255 };
+    const lowBrightness = { min: 90, max: 182 }; // 调整下限以确保颜色鲜艳
+  
+    function getRandomBetween(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+  
+    function componentToHex(c) {
+      return c.toString(16).padStart(2, "0");
+    }
+  
+    // 随机选择一个颜色分量作为高亮度值
+    const position = Math.floor(Math.random() * 3);
+    const components = [0, 0, 0];
+  
+    for (let i = 0; i < 3; i++) {
+      if (i === position) {
+        // 设置选定位置的颜色为高亮度
+        components[i] = getRandomBetween(highBrightness.min, highBrightness.max);
+      } else {
+        // 其余两个颜色分量设置为低亮度，但足够深以形成对比
+        components[i] = getRandomBetween(lowBrightness.min, lowBrightness.max);
+      }
+    }
+  
+    return "#" + components.map(componentToHex).join("");
+  }
+  const updateColor = (pen, params) => {
+    const blacklist = ["switch", "text"];
+    // power节点
+    const start = meta2d
+      .data()
+      .pens.filter((n) => n.flag == "power" && n.isOn === 1);
+    //获取 所有非 开关节点的所有节点
+    const allId = new Set();
+    const alloutId = new Set();
+    // 遍历当前节点 并初始化颜色
+    meta2d.data().pens.forEach((node) => {
+      if (node && node.id !== undefined) {
+        // 确保 node 和 node.id 存在
+        allId.add(node.id); // 添加节点 ID 到 allId 集合
+      }
+  
+      (node?.children ?? []).forEach((x) => alloutId.add(x));
+    });
+    const allNodeId = [...allId]
+      .filter((id) => ![...alloutId].includes(id))
+      .filter((id) => {
+        const node = meta2d.findOne(id);
+        return !blacklist.includes(node.flag);
+      });
+    allNodeId.forEach((id) => {
+      if (meta2d.findOne(id).flag == "busBar") {
+        meta2d.setValue({ id: id, background: "rgba(115,115,115,255)" });
+      } else {
+        meta2d.setValue({ id: id, color: "rgba(115,115,115,255)" });
+      }
+    });
+  
+    let hasStep = [];
+    // 记录是否短路。
+    let circuitNode;
+    const updateNode = (id, color, powerId) => {
+      const node = meta2d.findOne(id);
+      if (!node) return;
+      if (node?.flag == "power" && node.id != powerId && node.isOn == 1) {
+        circuitNode = "";
+        console.log("....", node.flag, node.id, powerId);
+        alert("线路短路");
+        circuitNode = node;
+        return;
+      }
+      //   组元 有 busBar  text   power loadSwitch circuitBreaker 且 不处理开关
+  
+      if (node?.flag == "busBar") {
+        meta2d.setValue({
+          id: node.id,
+          background: color,
+        });
+      }
+      if (node?.flag == "power" && node.isOn === 1) {
+        meta2d.setValue({
+          id: node.id,
+          color: color,
+        });
+      }
+      if (node?.type == 1) {
+        meta2d.setValue({
+          id: node.id,
+          color: color,
+        });
+      }
+  
+      // 如果开关  断开 则不继续遍历
+      if (node?.flag === "switch") {
+        if (node.showChild == 0) {
+          return;
+        }
+      }
+      // 记录已经 计算过的id
+      hasStep.push(id);
+      // 当是节点
+      if (node.hasOwnProperty("connectedLines")) {
+        node.connectedLines.forEach((n) => {
+          const nid = n.lineId;
+          if (hasStep.includes(nid)) return;
+          updateNode(nid, color, powerId);
+        });
+      } else {
+        node.anchors.forEach((n) => {
+          const nid = n.connectTo;
+          if (hasStep.includes(nid)) return;
+          updateNode(nid, color, powerId);
+        });
+      }
+    };
+  
+    start.forEach((node) => {
+      const color = getRandomBrightColor();
+      updateNode(node.id, color, node.id);
+    });
+    return circuitNode;
+  };
+  globalThis.updateSwitchNode = (pen, params) => {
+    meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild });
+    const circuitNode = updateColor(pen, params);
+  
+    if (circuitNode) {
+      meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild });
+    }
+    updateColor(pen, params);
+  };
+  globalThis.powerUpdate = (pen, params) => {
+    const cacheColor = pen.color;
+  
+    if (pen.isOn) {
+      // 如果是1
+      meta2d.setValue({ id: pen.id, color: "rgba(115,115,115,255)", isOn: 0 });
+    } else {
+      // 0 的情况
+      meta2d.setValue({ id: pen.id, isOn: 1 });
+    }
+    const circuitNode = updateColor(pen, params);
+  
+    if (circuitNode) {
+      if (pen.isOn) {
+        // 如果是1
+        meta2d.setValue({ id: pen.id, color: "rgba(115,115,115,255)", isOn: 0 });
+      } else {
+        // 0 的情况
+        meta2d.setValue({ id: pen.id, isOn: 1, color: cacheColor });
+      }
+    }
+    updateColor(pen, params);
+  };
+
+
 export const customData = {
   loaded: true,
   name: "常用图元",

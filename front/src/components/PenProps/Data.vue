@@ -27,8 +27,8 @@
   import { ref, reactive, onMounted } from 'vue';
   
   const defaultSwitchTags = ['power', 'switch'];
-  const checkedSwitchTags = ref([...defaultSwitchTags]);
-  const tags = ref([...defaultSwitchTags]);
+  const checkedSwitchTags = ref([]);
+  const tags = ref([]);
   
   // 1. 本地定义 activePen 和 multiPen
   let activePen = reactive({ target: [] });
@@ -42,12 +42,10 @@
         if (multiPen.value) {
           activePen.target = args;
           const first = args[0];
-          tags.value = first && first.tags ? [...first.tags] : ["power"];
-        } else {
+         } else {
           activePen.target = args[0];
-          tags.value = args[0] && args[0].tags ? [...args[0].tags] : ["power"];
-        }
-        checkedSwitchTags.value = defaultSwitchTags.filter(tag => tags.value.includes(tag));
+         }
+        
       });
     }
     // 初始化时同步当前节点的tags（兼容首次加载）
@@ -59,8 +57,7 @@
       } else {
         if (activePen.target.tags) nodeTags = [...activePen.target.tags];
       }
-      tags.value = nodeTags.length ? nodeTags : ["power"];
-      checkedSwitchTags.value = ["power"];
+ 
     }
   });
   
@@ -85,9 +82,11 @@
   }
   
   function updatePenTags() {
+    debugger
     if (window.meta2d && activePen.target) {
       if (multiPen.value) {
         for (let pen of activePen.target) {
+          console.log(pen,{ id: pen.id, tags: [...tags.value] })
           window.meta2d.setValue({ id: pen.id, tags: [...tags.value] }, { render: false });
         }
         window.meta2d.render();

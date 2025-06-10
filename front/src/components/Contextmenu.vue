@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref, nextTick} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
 let isPens = ref(false)
 let ctxMenu = ref()
@@ -31,7 +31,21 @@ eventBus.customOn('load',()=>{
     menuPos.top = e.clientY
     menuPos.left = e.clientX
     menuPos.visible = true
-    ctxMenu.value.focus()
+    nextTick(() => {
+      // 获取菜单高度和页面高度
+      const menuEl = ctxMenu.value
+      if (menuEl) {
+        const menuHeight = menuEl.offsetHeight
+        const pageHeight = window.innerHeight
+        // 如果菜单底部超出页面底部，则调整top
+        if (e.clientY + menuHeight > pageHeight) {
+          menuPos.top = pageHeight - menuHeight
+          // 防止top为负数
+          if (menuPos.top < 0) menuPos.top = 0
+        }
+      }
+      ctxMenu.value.focus()
+    })
   })
   meta2d.on("active",(pens)=>{
     if(pens.length>0){

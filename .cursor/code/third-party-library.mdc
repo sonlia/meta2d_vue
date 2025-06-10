@@ -1,0 +1,55 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 第三方库使用规范
+## 核心原则
+## 前端库规范
+### 核心库
+- **视图框架**：Vue 3（组合式API）
+- **UI框架**：Quasar Framework
+- **状态管理**：Pinia (已默认安装)
+- **路由管理**：Vue Router
+- **HTTP请求**：Axios
+- **工具函数**：优先使用`vueuse`和`lodash-es`，避免重复实现已有功能
+### 选择与引入
+- **优先使用第三方库**：优先使用成熟的库实现功能，避免重复造轮子
+- **统一性**：同一功能在项目不同部分使用相同的库
+- **响应式工具函数**：优先使用`vueuse`提供的功能。
+- **UUID生成**：使用`import { uid } from "quasar"`。
+### Pinia插件规范
+#### Pinia持久化插件
+项目必须使用`pinia-plugin-persistedstate`进行Pinia状态的持久化：
+**与后端通信**：
+- Pinia store应封装与后端通信的逻辑
+- API调用应在actions中执行
+- 避免在组件中直接调用API，优先通过store actions
+### 功能库对照表
+| 功能需求     | 指定库                      | 使用说明                           |
+| ------------ | --------------------------- | ---------------------------------- |
+| 图形节点编辑 | litegraph.js                | 用于节点编辑和流程设计             |
+| 代码编辑器   | monaco-editor-core          | 提供类VSCode的代码编辑体验         |
+| 数据表格     | vxe-table                   | 处理复杂表格和大数据量展示         |
+| 树形控件     | ztree                       | 处理树结构数据展示                 |
+| 工具函数     | lodash-es                   | 数据处理、深拷贝、防抖节流等       |
+| HTTP请求     | axios                       | 通过boot/axios.js中封装的方法使用  |
+| 日期处理     | date-fns                    | 日期格式化、计算等                 |
+| 表单校验     | Quasar内置校验              | 通过rules属性配置                  |
+| 唯一ID生成   | Quasar uid                  | 使用`import { uid } from "quasar"` |
+| 状态持久化   | pinia-plugin-persistedstate | Pinia状态持久化                    |
+
+### 前端工具函数优先级
+- **VueUse函数**：优先使用VueUse提供的组合式API
+- **Quasar工具**：其次使用Quasar提供的工具函数
+- **lodash-es**：再次使用lodash-es处理复杂数据
+- **自定义工具**：以上库无法满足需求时再自定义实现
+### 禁止使用的库
+- **jQuery**：不得使用jQuery或直接DOM操作库
+- **moment.js**：改用date-fns处理日期
+- **Vuex**：改用Pinia进行状态管理
+- **未经讨论的UI组件库**：不引入额外UI库
+
+
+
+
