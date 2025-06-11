@@ -33,43 +33,17 @@ onMounted(async () => {
   const icons = await getOtherIcons();
   iconList.push(...icons.flat(2));
   iconList.push(...defaultIcons);
-  console.log(iconList, "fefe");
-  const saveAsComponent = () => {
-    const Re = meta2d.canvas.getAllByPens(meta2d.store.active);
-    ie.componentDatas = meta2d.toComponent(Re, meta2d.store.data.showChild, !1);
-    const Q = meta2d.data();
-    if (
-      meta2d.store.active &&
-      meta2d.store.active.length === 1 &&
-      meta2d.store.active[0].name === "combine"
-    ) {
-      let ie = {
-        center: Q.center,
-        folder: "",
-        origin: Q.origin,
-        scale: Q.scale,
-        x: Q.x,
-        y: Q.y,
-      };
-      ie.name =
-        meta2d.store.active[0].description || "\u65B0\u5EFA\u9879\u76EE";
-      (ie.fullname = ke.fullname), (ie.component = !0);
-      const Re = meta2d.canvas.getAllByPens(meta2d.store.active);
-      (ie.componentDatas = meta2d.toComponent(
-        Re,
-        meta2d.store.data.showChild,
-        !1
-      )),
-        (ie.version = Q.version);
-      let We = Re.map((Ct) => Ct.id);
-      ie.pens = Q.pens.filter((Ct) => We.includes(Ct.id));
-    }
-  };
+ 
+ 
 
 
 });
 
 function dragPen(data, e) {
+  if (meta2d.store.data.locked != 0) {
+    window.alert('画布已锁定，无法添加图元，确认已选择工程,右上角解锁');
+    return;
+  }
   const json = JSON.stringify(data);
   e.dataTransfer.setData("Meta2d", json);
 }

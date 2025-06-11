@@ -21,7 +21,7 @@ const event = useEventbus()
 
 onMounted(async ()=>{
   // 创建meta2d对象
-  let meta2d = new Meta2d("meta2d")
+  let meta2d = new Meta2d("meta2d",{drawingLineName:"line"})
 
   meta2d.register(flowPens())
 
