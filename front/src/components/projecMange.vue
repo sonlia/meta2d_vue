@@ -68,7 +68,7 @@ const loadNode = async (node, resolve) => {
   try {
     if (node.level === 0) {
       const response = await axios.get("/api/loadRoot")
-
+      
       resolve(response.data)
     } else {
       const response = await axios.post("/api/loadChildren", { id: node.data.id })

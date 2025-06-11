@@ -760,6 +760,7 @@ const loadSwitch = {
   name: "断路器",
   icon: "sgcc sgcc-a-shouchekaiguanguan--_huaban1",
   type: "icon",
+  text:"断路器  ",
   data: [
     {
         "anchors": [
@@ -821,7 +822,8 @@ const loadSwitch = {
         "y": 382.14285714285717,
         "componentId": "01948d77-0662-700a-9b80-340bc2fe4a9e",
         "originId": "168de522",
-        "lineAnimateImages": []
+        "lineAnimateImages": [],
+        "text": "断路器"
     },
     {
         "anchors": [
@@ -1612,6 +1614,38 @@ const power = {
   },
 };
 
+// 上一节点（朝上）
+const prevNode = {
+  tag: "icon",
+  name: "上一节点",
+  svg: `<svg viewBox="0 0 32 32" width="25" height="25" xmlns="http://www.w3.org/2000/svg"><path d="M16 28V6M8 20h16M4 28h24" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  data: {
+    name: "svgPath",
+    x: 100,
+    y: 100,
+    width: 100,
+    height: 100,
+    path: "M16 28V6M8 20h16M4 28h24",
+    lineWidth: 6 // 这里设置线宽
+  }
+};
+
+// 下一节点（朝下，旋转180°）
+const nextNode = {
+  tag: "icon",
+  name: "下一节点",
+  svg: `<svg viewBox="0 0 32 32" width="25" height="25" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(180deg)"><path d="M16 28V6M8 20h16M4 28h24" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  data: {
+    name: "svgPath",
+    x: 100,
+    y: 100,
+    width: 100,
+    height: 100,
+    path: "M16 28V6M8 20h16M4 28h24",
+    lineWidth: 6 // 这里设置线宽
+  }
+};
+
 function getRandomBrightColor() {
     // 定义亮度范围
     const highBrightness = { min: 200, max: 255 };
@@ -1775,5 +1809,5 @@ export const customData = {
   loaded: true,
   name: "常用图元",
   show: true,
-  list: [power, busBar, fuhekaiguan,circuitBreakerSwitch, loadSwitch,didaoSwitch,bianyaqi,user],
+  list: [power, busBar, fuhekaiguan, circuitBreakerSwitch, loadSwitch, didaoSwitch, bianyaqi, user, prevNode, nextNode],
 };

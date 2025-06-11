@@ -71,16 +71,18 @@ const baseDir = './projectData'; // 指定要 读取的目录
 async function readDirectory(dir) {
   try {
     const files = await readdir(dir, { withFileTypes: true });
+    console.log(files, "files");
     const nodes = [];
     for (const file of files) {
       if (file.isDirectory()) {
         const children = await readDirectory(path.join(dir, file.name));
         nodes.push({ id: path.join(dir, file.name), label: file.name, children });
       } else {
-        if(file.name.startsWith("bak-")) break
+        if(file.name.startsWith("bak-")) continue
         nodes.push({ id: path.join(dir, file.name), label: file.name });
       }
     }
+    console.log(nodes, "nodes");
     return nodes;
   } catch (err) {
     console.error(err);
@@ -96,6 +98,7 @@ app.get('/api/loadRoot',checkAuth, async (req, res) => {
       await fs.promises.mkdir(baseDir, { recursive: true });
     }
     const rootNodes = await readDirectory(baseDir);
+    console.log(rootNodes,baseDir, "rootNodes");
     const data = [{ id: baseDir, label: "projectData", children: rootNodes }];
     res.json(data);
  
