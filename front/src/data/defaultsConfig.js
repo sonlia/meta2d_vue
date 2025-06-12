@@ -444,46 +444,17 @@ const menuFunc = {
   await  openFile(newFilePath)
  },
   async saveToserver() {
-    let oldData = ""
-    // 获取元数据
-    const oldNode = { id: currentSelect.value }
-    // meta  打开
-    const oldResponse = await axios.post("/api/readFile", oldNode);
-
-    if (oldResponse.data.success) {
-      if (oldResponse.data.content !== "") {
-        oldData = JSON.parse(oldResponse.data.content).projectData
-      }
-    }
-
+  
+ 
     const jsonData = meta2d.data()
-    // 过滤 开关
-    const filterData = (x) => {
-      if (x?.flag == "switch") {
-        return { status: x.showChild, id: x.id, text: x.text }
-      }
-      if (x?.flag == "power") {
-        return { status: x.isOn, id: x.id, text: x.text }
-      }
-    }
-    const newDiffData = jsonData.pens?.map((x) => filterData(x)).filter((x) => x != undefined)
-
-    if (oldData) {
-      const oldDiffData = oldData.pens?.map((x) => filterData(x)).filter((x) => x != undefined)
-      const diffData = compareData(oldDiffData, newDiffData)
-      if (diffData.length != 0) {
-        const time  = Date.now()
-        switchChangHistory.value.unshift({ [time]: diffData })
-      }
-    }
-    const json = JSON.stringify({ projectData: jsonData, switchChangHistory: switchChangHistory.value })
+ 
+    const json = JSON.stringify(jsonData)
     const blob = new Blob([json], { type: 'application/json' });
     try {
       const treePath = currentSelect.value;
       const fileName = treePath.split('/').pop();
-      const filePath = await uploadFileToServer(blob, fileName, treePath);
-      window.lastSavedFilePath = filePath;
-      console.log("保存成功");
+       await uploadFileToServer(blob, fileName, treePath);
+       console.log("保存成功");
     } catch (e) {
       alert(e.message || "保存错误.");
     }

@@ -19,22 +19,8 @@ app.use(express.urlencoded({ limit: '10gb', extended: true }));
 app.use(cookieParser()); // 解析 Cookie
 app.use(compression());
 
-// 自定义存储配置，支持前端传 relativePath 字段
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    let relativePath = req.body.relativePath || file.originalname;
-    let dir = path.dirname(relativePath);
-    let saveDir = path.join('./', dir);
-    console.log(dir, "dir",saveDir,req.body);
-    fs.mkdirSync(saveDir, { recursive: true });
-    cb(null, saveDir);
-  },
-  filename: function (req, file, cb) {
-    let relativePath = req.body.relativePath || file.originalname;
-    cb(null, path.basename(relativePath));
-  }
-});
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 * 1024 } });
+// multer 配置为 memoryStorage
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 * 1024 } });
 
 // 单用户数据
 // 模拟用户数据
@@ -339,16 +325,83 @@ app.post('/api/customIcons/edit', checkAuth, async (req, res) => {
   res.json({ success: true });
 });
 
+// 辅助函数：对比新旧数据，生成 diff
+function compareData(oldArr, newArr) {
+  if (!Array.isArray(oldArr)) oldArr = [];
+  if (!Array.isArray(newArr)) newArr = [];
+  const diff = [];
+  const oldMap = new Map();
+  oldArr.forEach(item => oldMap.set(item.id, item));
+  newArr.forEach(item => {
+    const oldItem = oldMap.get(item.id);
+    if (!oldItem || JSON.stringify(oldItem) !== JSON.stringify(item)) {
+      diff.push(item);
+    }
+  });
+  return diff;
+}
+
+// 新旧数据对比与历史合并
+function handleProjectDataHistory(oldContent, newContent) {
+  //oldcontent  ，包含 projectData  以及 switchChangHistory
+  if(!oldContent) return JSON.stringify({ projectData: JSON.parse(newContent), switchChangHistory: [] });
+  let oldData = JSON.parse(oldContent)?.projectData??{};
+  let switchChangHistory = JSON.parse(oldContent)?.switchChangHistory??[];
+ 
+  const newData = JSON.parse(newContent)??{};
+  
+  const filterData = (x) => {
+    if (x?.flag == "switch") {
+      return { status: x.showChild, id: x.id, text: x.text };
+    }
+    if (x?.flag == "power") {
+      return { status: x.isOn, id: x.id, text: x.text };
+    }
+  };
+  const newDiffData = newData?.pens?.map((x) => filterData(x)).filter((x) => x != undefined);
+
+  const oldDiffData = oldData?.pens?.map((x) => filterData(x)).filter((x) => x != undefined);
+
+ 
+    const diffData = compareData(oldDiffData, newDiffData);
+    if (diffData.length != 0) {
+      const time = Date.now();
+      switchChangHistory.unshift({ [time]: diffData });
+    }
+ 
+  return JSON.stringify({ projectData: newData, switchChangHistory });
+}
+
 // 新增：流式上传接口
 // 前端用 FormData 方式上传，字段名为 file
 app.post('/api/uploadFile', checkAuth, upload.single('file'), async (req, res) => {
   try {
-    // req.file 包含上传的文件信息
-    // 你可以根据需要将文件移动/重命名/处理
-    // 例如保存为指定名称
-    // const targetPath = path.join('./projectData', req.file.originalname);
-    // await fs.promises.rename(req.file.path, targetPath);
-    res.json({ success: true, message: '文件上传成功', file: req.file });
+    const relativePath = req.body.relativePath;
+    if (!relativePath) {
+      return res.status(400).json({ success: false, message: '缺少 relativePath' });
+    }
+    const filePath = path.join('./', relativePath);
+
+    // 1. 读取旧数据
+    let oldContent = "";
+    if (fs.existsSync(filePath)) {
+      try {
+        oldContent = await fs.promises.readFile(filePath, 'utf8');
+      } catch (e) {}
+    }
+
+    // 2. 获取新数据（直接用 req.file.buffer）
+    const newContent = req.file.buffer.toString('utf8');
+    console.log(newContent, "newContent==============",oldContent,filePath);
+    // 3. 合并历史
+    const finalContent = handleProjectDataHistory(oldContent, newContent);
+
+    // 4. 自动创建目录并写入
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    await fs.promises.writeFile(filePath, finalContent, { encoding: 'utf8' });
+
+    // 5. 返回
+    res.json({ success: true, message: '文件上传成功', file: { path: relativePath, size: req.file.size, originalname: req.file.originalname } });
   } catch (err) {
     console.error(err);
     res.json({ success: false, message: err.message });
