@@ -125,7 +125,9 @@ const add = async (type) => {
 
           // 更新树形数据
           treeRef.value.updateKeyChildren(currentNode.value.data.id, currentNode.value.data);
+         setTimeout(() => {
           updateKey.value++
+         }, 1000);
         }
       } else {
         alert(response.data.message || "Failed to add file.");

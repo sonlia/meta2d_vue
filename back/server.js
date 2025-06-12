@@ -7,18 +7,34 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
 import compression from 'compression';
-import bodyParser from 'body-parser';
- 
+import multer from 'multer';
+
 const app = express();
 app.use(cors({
   credentials: true, // 允许携带 Cookie
   origin: 'http://localhost:8080' // 前端地址
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10gb' }));
+app.use(express.urlencoded({ limit: '10gb', extended: true }));
 app.use(cookieParser()); // 解析 Cookie
 app.use(compression());
-app.use(bodyParser.json({ limit: '20mb' }));
-app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
+
+// 自定义存储配置，支持前端传 relativePath 字段
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    let relativePath = req.body.relativePath || file.originalname;
+    let dir = path.dirname(relativePath);
+    let saveDir = path.join('./', dir);
+    console.log(dir, "dir",saveDir,req.body);
+    fs.mkdirSync(saveDir, { recursive: true });
+    cb(null, saveDir);
+  },
+  filename: function (req, file, cb) {
+    let relativePath = req.body.relativePath || file.originalname;
+    cb(null, path.basename(relativePath));
+  }
+});
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 * 1024 } });
 
 // 单用户数据
 // 模拟用户数据
@@ -71,8 +87,7 @@ const baseDir = './projectData'; // 指定要 读取的目录
 async function readDirectory(dir) {
   try {
     const files = await readdir(dir, { withFileTypes: true });
-    console.log(files, "files");
-    const nodes = [];
+     const nodes = [];
     for (const file of files) {
       if (file.isDirectory()) {
         const children = await readDirectory(path.join(dir, file.name));
@@ -82,8 +97,7 @@ async function readDirectory(dir) {
         nodes.push({ id: path.join(dir, file.name), label: file.name });
       }
     }
-    console.log(nodes, "nodes");
-    return nodes;
+     return nodes;
   } catch (err) {
     console.error(err);
     return [];
@@ -325,6 +339,52 @@ app.post('/api/customIcons/edit', checkAuth, async (req, res) => {
   res.json({ success: true });
 });
 
+// 新增：流式上传接口
+// 前端用 FormData 方式上传，字段名为 file
+app.post('/api/uploadFile', checkAuth, upload.single('file'), async (req, res) => {
+  try {
+    // req.file 包含上传的文件信息
+    // 你可以根据需要将文件移动/重命名/处理
+    // 例如保存为指定名称
+    // const targetPath = path.join('./projectData', req.file.originalname);
+    // await fs.promises.rename(req.file.path, targetPath);
+    res.json({ success: true, message: '文件上传成功', file: req.file });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: err.message });
+  }
+});
+
+
+
+// 下载大文件接口
+// 前端请求 /api/downloadFile?filename=xxx
+app.get('/api/downloadFile', checkAuth, async (req, res) => {
+  const { filename } = req.query;
+  if (!filename) {
+    return res.status(400).json({ success: false, message: '缺少文件名' });
+  }
+  // 校验 filename 必须以 projectData/ 开头，防止越权
+  if (!filename.startsWith('projectData/')) {
+    return res.status(400).json({ success: false, message: '非法文件路径' });
+  }
+  const filePath = path.resolve(filename);
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ success: false, message: '文件不存在' });
+  }
+  // 获取文件大小
+  const stat = fs.statSync(filePath);
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(filename))}`);
+  res.setHeader('Content-Length', stat.size);
+  // 用流方式读取并传输
+  const readStream = fs.createReadStream(filePath);
+  readStream.pipe(res);
+  // 错误处理
+  readStream.on('error', (err) => {
+    res.status(500).json({ success: false, message: '文件读取出错' });
+  });
+});
 
 
 

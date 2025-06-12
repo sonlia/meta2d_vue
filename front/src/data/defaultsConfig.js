@@ -15,27 +15,25 @@ function getUserDir(path, extend = []) {
     return
   }
 }
-export async function  openFile(id){
-  const node = { id: id }
-  // meta  打开
-  const response = await axios.post("/api/readFile", node)
-
-  if (response.data.success) {
-    if (response.data.content === "") {
-      meta2d.open("")
-    } else {
-      const resdata = JSON.parse(response.data.content)
-      if (resdata.length > 0 && typeof resdata[0] === "object" && resdata[0] !== null) {
-        const keys = Object.keys(array[0])
-       }
-      switchChangHistory.value = resdata.switchChangHistory
-
-      meta2d.open(resdata.projectData)
+export async function openFile(filePath) {
+  try {
+    const blob = await downloadFileFromServer(filePath);
+    const text = await blob.text();
+  
+    let data=""
+    if (text) {
+ 
+      const resdata = JSON.parse(text);
+      data = resdata.projectData
+      switchChangHistory.value = resdata.switchChangHistory;
     }
-    meta2d.store.data.locked = 2
-    lockStatus.value = 2
-  } else {
-    alert(response.data.message || "打开错误.")
+ 
+    meta2d.open(data);
+    meta2d.store.data.locked = 2;
+    lockStatus.value = 2;
+ 
+  } catch (e) {
+    alert(e.message || '打开错误.');
   }
 }
 function formatDate(dateStr) {
@@ -455,45 +453,41 @@ const menuFunc = {
     if (oldResponse.data.success) {
       if (oldResponse.data.content !== "") {
         oldData = JSON.parse(oldResponse.data.content).projectData
-
-      } }
-
-
-      const jsonData = meta2d.data()
-      // 过滤 开关
-      const filterData = (x) => {
-        if (x?.flag == "switch") {
-          return { status: x.showChild, id: x.id, text: x.text }
-        }
-        if (x?.flag == "power") {
-          return { status: x.isOn, id: x.id, text: x.text }
-        }
       }
-      const newDiffData = jsonData.pens?.map((x) => filterData(x)).filter((x) => x != undefined)
+    }
 
-      if (oldData) {
-        const oldDiffData = oldData.pens?.map((x) => filterData(x)).filter((x) => x != undefined)
-        const diffData = compareData(oldDiffData, newDiffData)
-      
-        if (diffData.length != 0) {
-          const time  = Date.now()
-           
-          switchChangHistory.value.unshift({ [time]: diffData })
-        }
+    const jsonData = meta2d.data()
+    // 过滤 开关
+    const filterData = (x) => {
+      if (x?.flag == "switch") {
+        return { status: x.showChild, id: x.id, text: x.text }
       }
-
-      const json = JSON.stringify({ projectData: jsonData, switchChangHistory: switchChangHistory.value })
-       const node = { id: currentSelect.value, content: json }
-      // meta  打开
-      const response = await axios.post("/api/saveFile", node)
-
-      if (response.data.success) {
-        console.log("保存成功")
-      } else {
-        alert(response.data.message || "保存错误.")
+      if (x?.flag == "power") {
+        return { status: x.isOn, id: x.id, text: x.text }
       }
-    },
- 
+    }
+    const newDiffData = jsonData.pens?.map((x) => filterData(x)).filter((x) => x != undefined)
+
+    if (oldData) {
+      const oldDiffData = oldData.pens?.map((x) => filterData(x)).filter((x) => x != undefined)
+      const diffData = compareData(oldDiffData, newDiffData)
+      if (diffData.length != 0) {
+        const time  = Date.now()
+        switchChangHistory.value.unshift({ [time]: diffData })
+      }
+    }
+    const json = JSON.stringify({ projectData: jsonData, switchChangHistory: switchChangHistory.value })
+    const blob = new Blob([json], { type: 'application/json' });
+    try {
+      const treePath = currentSelect.value;
+      const fileName = treePath.split('/').pop();
+      const filePath = await uploadFileToServer(blob, fileName, treePath);
+      window.lastSavedFilePath = filePath;
+      console.log("保存成功");
+    } catch (e) {
+      alert(e.message || "保存错误.");
+    }
+  },
     saveFile() {
       const jsonData = window.meta2d.data() // 获取数据 数据怎么来？怎么处理？
       const json = JSON.stringify(jsonData)
@@ -1013,3 +1007,43 @@ export const animateType = [
     ],
   },
 ]
+
+/**
+ * 通用大文件上传
+ * @param {Blob|File} fileBlob - 要上传的文件内容
+ * @param {string} fileName - 文件名
+ * @param {string} relativePath - tree 结构的完整相对路径（如 projectData/dir1/dir2/file.json）
+ * @returns {Promise<string>} - 返回后端保存的 file.path
+ */
+export async function uploadFileToServer(fileBlob, fileName, relativePath) {
+  const formData = new FormData();
+  if (relativePath) {
+    formData.append('relativePath', relativePath); // 先加路径
+  }
+  formData.append('file', fileBlob, fileName); // 再加文件
+  const response = await axios.post('/api/uploadFile', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    withCredentials: true
+  });
+  if (response.data.success && response.data.file && response.data.file.path) {
+    return response.data.file.path; // 返回后端保存的路径
+  } else {
+    throw new Error(response.data.message || '上传失败');
+  }
+}
+
+/**
+ * 通用大文件下载
+ * @param {string} filePath - 后端保存的 file.path
+ * @returns {Promise<Blob>} - 返回文件内容的 Blob
+ */
+export async function downloadFileFromServer(filePath) {
+  const res = await fetch(`/api/downloadFile?filename=${encodeURIComponent(filePath)}`, {
+    method: 'GET',
+    credentials: 'include'
+  });
+  if (!res.ok) {
+    throw new Error('下载失败');
+  }
+  return await res.blob();
+}

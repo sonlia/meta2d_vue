@@ -44,6 +44,7 @@ const bianyaqi = {
       },
     ],
     rotate: 0,
+    text:"变压器"
   },
 };
 
@@ -59,7 +60,7 @@ const user = {
     y: 100,
     width: 100,
     height: 100,
- 
+ text:"用户",
     path: "M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z"
 ,
   },
@@ -81,6 +82,7 @@ const didaoSwitch = {
       children: [],
       x: 0,
       y: 0,
+      text:"地刀",
       lineWidth: 1,
       fontSize: 12,
       lineHeight: 1.5,
@@ -250,6 +252,7 @@ const circuitBreakerSwitch = {
       lineWidth: 1,
       fontSize: 12,
       lineHeight: 1.5,
+      text:"隔离开关",
       anchors: [
         {
           x: 0.5,
@@ -797,6 +800,7 @@ const loadSwitch = {
             "365c8da",
             "b059964"
         ],
+        
         "events": [
             {
                 "action": 5,
@@ -961,6 +965,7 @@ const busBar = {
     name: "rectangle",
     lineWidth: 0,
     background: "#222222",
+    text:"母线",
   },
 };
 
@@ -978,6 +983,7 @@ const fuhekaiguan = {
       y: 0,
       ex: 0.9999999999999996,
       ey: 1,
+      text:"负荷开关",
       width: 0.9999999999999996,
       height: 1,
       center: {
@@ -1603,6 +1609,7 @@ const power = {
     name: "icon",
     iconFamily: "sgcc",
     icon: "",
+    text:"电源",
     events: [
       {
         name: "click",
@@ -1626,7 +1633,8 @@ const prevNode = {
     width: 100,
     height: 100,
     path: "M16 28V6M8 20h16M4 28h24",
-    lineWidth: 6 // 这里设置线宽
+    lineWidth: 6, // 这里设置线宽
+    text:"上一节点",
   }
 };
 
@@ -1642,7 +1650,8 @@ const nextNode = {
     width: 100,
     height: 100,
     path: "M16 28V6M8 20h16M4 28h24",
-    lineWidth: 6 // 这里设置线宽
+    lineWidth: 6, // 这里设置线宽
+    text:"下一节点",
   }
 };
 

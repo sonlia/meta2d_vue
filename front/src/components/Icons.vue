@@ -53,6 +53,7 @@ function onTouchstart(data, e) {
 }
 const getCurrentSelect = async (data) => {
   currentSelect.value = data.id;
+  console.log(data, "currentSelect.value");
   await openFile(currentSelect.value);
 };
 async function changeState(tab) {
