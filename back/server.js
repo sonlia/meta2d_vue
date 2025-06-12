@@ -326,19 +326,52 @@ app.post('/api/customIcons/edit', checkAuth, async (req, res) => {
 });
 
 // 辅助函数：对比新旧数据，生成 diff
-function compareData(oldArr, newArr) {
-  if (!Array.isArray(oldArr)) oldArr = [];
-  if (!Array.isArray(newArr)) newArr = [];
-  const diff = [];
-  const oldMap = new Map();
-  oldArr.forEach(item => oldMap.set(item.id, item));
-  newArr.forEach(item => {
-    const oldItem = oldMap.get(item.id);
-    if (!oldItem || JSON.stringify(oldItem) !== JSON.stringify(item)) {
-      diff.push(item);
-    }
-  });
-  return diff;
+function compareData(oldList, newList) {
+  const oldMap = new Map(oldList.map(item => [item.id, item]));
+  const newMap = new Map(newList.map(item => [item.id, item]));
+
+  const result = {
+      added: [], // 新增的数据
+      removed: [], // 删除的数据
+      updated: [] // 更新的数据及其变化
+  };
+
+  // 检查新增和更新
+  for (const [id, newItem] of newMap) {
+      if (!oldMap.has(id)) {
+          result.added.push(newItem); // 新增
+      } else {
+          const oldItem = oldMap.get(id);
+          const changes = {};
+
+          // 检查 status 是否有变化
+          if (newItem.status !== oldItem.status) {
+              changes.status = { oldStatus: oldItem.status, newStatus: newItem.status };
+          }
+          // 检查 text 是否有变化
+          if (newItem.text !== oldItem.text) {
+              changes.text = { oldText: oldItem.text, newText: newItem.text };
+          }
+
+          // 如果有变化，则加入 updated 列表
+          if (Object.keys(changes).length > 0) {
+              result.updated.push({
+                  id: id, 
+                  text: newItem.text, // 默认包含 text 属性
+                  change: changes // 变化的属性
+              });
+          }
+      }
+  }
+
+  // 检查删除
+  for (const [id, oldItem] of oldMap) {
+      if (!newMap.has(id)) {
+          result.removed.push(oldItem); // 删除
+      }
+  }
+
+  return result;
 }
 
 // 新旧数据对比与历史合并
@@ -364,6 +397,7 @@ function handleProjectDataHistory(oldContent, newContent) {
 
  
     const diffData = compareData(oldDiffData, newDiffData);
+    console.log(diffData, "diffData==============");
     if (diffData.length != 0) {
       const time = Date.now();
       switchChangHistory.unshift({ [time]: diffData });

@@ -4,6 +4,11 @@ import Meta2d from "./Meta2d.vue";
 import Setting from "./Setting.vue";
 import changHistory from "./changHistory.vue";
 import  {lockStatus} from "../data/defaultsConfig.js"
+import { watch } from "vue";
+
+watch(lockStatus,()=>{
+  console.log(lockStatus.value, "lockStatus");
+})``
 </script>
 
 <template>

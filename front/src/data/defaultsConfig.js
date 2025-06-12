@@ -49,53 +49,7 @@ function formatDate(dateStr) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
-function compareData(oldList, newList) {
-  const oldMap = new Map(oldList.map(item => [item.id, item]));
-  const newMap = new Map(newList.map(item => [item.id, item]));
 
-  const result = {
-      added: [], // 新增的数据
-      removed: [], // 删除的数据
-      updated: [] // 更新的数据及其变化
-  };
-
-  // 检查新增和更新
-  for (const [id, newItem] of newMap) {
-      if (!oldMap.has(id)) {
-          result.added.push(newItem); // 新增
-      } else {
-          const oldItem = oldMap.get(id);
-          const changes = {};
-
-          // 检查 status 是否有变化
-          if (newItem.status !== oldItem.status) {
-              changes.status = { oldStatus: oldItem.status, newStatus: newItem.status };
-          }
-          // 检查 text 是否有变化
-          if (newItem.text !== oldItem.text) {
-              changes.text = { oldText: oldItem.text, newText: newItem.text };
-          }
-
-          // 如果有变化，则加入 updated 列表
-          if (Object.keys(changes).length > 0) {
-              result.updated.push({
-                  id: id, 
-                  text: newItem.text, // 默认包含 text 属性
-                  change: changes // 变化的属性
-              });
-          }
-      }
-  }
-
-  // 检查删除
-  for (const [id, oldItem] of oldMap) {
-      if (!newMap.has(id)) {
-          result.removed.push(oldItem); // 删除
-      }
-  }
-
-  return result;
-}
 export const lockStatus = ref()
  
 export const switchChangHistory = ref([])
