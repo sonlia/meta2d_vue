@@ -29,18 +29,49 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { switchChangHistory } from "../data/defaultsConfig.js";
+import { computed, ref, watch } from "vue";
+import { currentSelect, getSwitchHistory } from "../data/defaultsConfig.js";
+
+const switchChangHistory = ref([]);
+
+async function fetchHistory() {
+  if (!currentSelect.value) return;
+  try {
+    const history = await getSwitchHistory(currentSelect.value);
+    switchChangHistory.value = history;
+  } catch (e) {
+    switchChangHistory.value = [];
+  }
+}
+
+// 监听 currentSelect 变化自动请求
+watch(currentSelect, () => {
+  fetchHistory();
+}, { immediate: true });
+
+// 监听 meta2d.store.data.locked，locked!=0时延迟500ms重试
+if (window.meta2d && window.meta2d.store && window.meta2d.store.data) {
+  watch(
+    () => window.meta2d.store.data.locked,
+    (val) => {
+      if (val !== 0) {
+        setTimeout(() => {
+          fetchHistory();
+        }, 500);
+      }
+    }
+  );
+}
 
 const formattedData = computed(() => {
-  return switchChangHistory.value.map(item => {
+  return (switchChangHistory.value || []).map(item => {
     const timestamp = Object.keys(item)[0];
-    const data = item[timestamp];
+    const data = item[timestamp] || { added: [], removed: [], updated: [] };
     return {
       timestamp: new Date(parseInt(timestamp)).toLocaleString(),
-      added: data.added?.map(add => ({ ...add, text: add.text || '无' })),
-      removed: data.removed?.map(remove => ({ ...remove, text: remove.text || '无' })),
-      updated: data.updated?.map(update => ({
+      added: (data.added || []).map(add => ({ ...add, text: add.text || '无' })),
+      removed: (data.removed || []).map(remove => ({ ...remove, text: add.text || '无' })),
+      updated: (data.updated || []).map(update => ({
         ...update,
         change: update.change,
         text: update.text || '无'

@@ -473,10 +473,24 @@ app.get('/api/downloadFile', checkAuth, async (req, res) => {
   });
 });
 
-
-
-
-
+// 获取指定文件的 switchChangHistory
+app.post('/api/getSwitchHistory', checkAuth, async (req, res) => {
+  const { id } = req.body;
+  if (!id) {
+    return res.status(400).json({ success: false, message: '缺少文件路径' });
+  }
+  const filePath = path.join('./', id);
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ success: false, message: '文件不存在' });
+  }
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf8');
+    const parsed = JSON.parse(content);
+    res.json({ success: true, switchChangHistory: parsed.switchChangHistory || [] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: '读取失败' });
+  }
+});
 
 const distDir = path.join("../front", 'dist');
 app.use(express.static(distDir));

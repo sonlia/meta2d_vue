@@ -25,8 +25,7 @@ export async function openFile(filePath) {
  
       const resdata = JSON.parse(text);
       data = resdata.projectData
-      switchChangHistory.value = resdata.switchChangHistory;
-    }
+     }
  
     meta2d.open(data);
     meta2d.store.data.locked = 2;
@@ -52,7 +51,7 @@ function formatDate(dateStr) {
 
 export const lockStatus = ref()
  
-export const switchChangHistory = ref([])
+ 
 
 export const currentSelect = ref()
 export const userPensUrl = {
@@ -971,4 +970,20 @@ export async function downloadFileFromServer(filePath) {
     throw new Error('下载失败');
   }
   return await res.blob();
+}
+
+/**
+ * 获取指定文件的 switchChangHistory
+ * @param {string} id - 文件路径
+ * @returns {Promise<Array>} - 返回 switchChangHistory 数组
+ */
+export async function getSwitchHistory(id) {
+  const response = await axios.post('/api/getSwitchHistory', { id }, {
+    withCredentials: true
+  });
+  if (response.data.success) {
+    return response.data.switchChangHistory || [];
+  } else {
+    throw new Error(response.data.message || '获取历史失败');
+  }
 }

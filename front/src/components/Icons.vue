@@ -15,7 +15,7 @@ import { customData } from "../../public/custom/custom.js";
 import {
   currentSelect,
   lockStatus,
-  switchChangHistory,
+ 
   openFile,
 } from "../data/defaultsConfig.js";
 const activeName = ref("filelist");
