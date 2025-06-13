@@ -406,8 +406,7 @@ function handleProjectDataHistory(oldContent, newContent) {
   return JSON.stringify({ projectData: newData, switchChangHistory });
 }
 
-// 新增：流式上传接口
-// 前端用 FormData 方式上传，字段名为 file
+ 
 app.post('/api/uploadFile', checkAuth, upload.single('file'), async (req, res) => {
   try {
     const relativePath = req.body.relativePath;
@@ -415,26 +414,34 @@ app.post('/api/uploadFile', checkAuth, upload.single('file'), async (req, res) =
       return res.status(400).json({ success: false, message: '缺少 relativePath' });
     }
     const filePath = path.join('./', relativePath);
+    const backupFilePath = path.join(path.dirname(filePath), `bak-${path.basename(filePath)}`);
 
-    // 1. 读取旧数据
-    let oldContent = "";
+    // 1. 如果原文件存在，先备份
     if (fs.existsSync(filePath)) {
       try {
-        oldContent = await fs.promises.readFile(filePath, 'utf8');
+        await fs.promises.copyFile(filePath, backupFilePath);
+        console.log(`Backup created: ${backupFilePath}`);
+      } catch (e) { console.error('备份失败', e); }
+    }
+
+    // 2. 读取旧数据（bak 文件）
+    let oldContent = "";
+    if (fs.existsSync(backupFilePath)) {
+      try {
+        oldContent = await fs.promises.readFile(backupFilePath, 'utf8');
       } catch (e) {}
     }
 
-    // 2. 获取新数据（直接用 req.file.buffer）
+    // 3. 获取新数据（直接用 req.file.buffer）
     const newContent = req.file.buffer.toString('utf8');
-    console.log(newContent, "newContent==============",oldContent,filePath);
-    // 3. 合并历史
+    // 4. 合并历史
     const finalContent = handleProjectDataHistory(oldContent, newContent);
 
-    // 4. 自动创建目录并写入
+    // 5. 自动创建目录并写入
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     await fs.promises.writeFile(filePath, finalContent, { encoding: 'utf8' });
 
-    // 5. 返回
+    // 6. 返回
     res.json({ success: true, message: '文件上传成功', file: { path: relativePath, size: req.file.size, originalname: req.file.originalname } });
   } catch (err) {
     console.error(err);
