@@ -535,8 +535,9 @@ app.post('/api/getSwitchHistory', checkAuth, async (req, res) => {
   }
   try {
     const content = await fs.promises.readFile(filePath, 'utf8');
+    if(!content) return res.json({ success: true, switchChangHistory: [] });
     const parsed = JSON.parse(content);
-    res.json({ success: true, switchChangHistory: parsed.switchChangHistory || [] });
+    res.json({ success: true, switchChangHistory: parsed?.switchChangHistory || [] });
   } catch (err) {
     res.status(500).json({ success: false, message: '读取失败' });
   }

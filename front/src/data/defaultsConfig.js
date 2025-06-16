@@ -1005,7 +1005,7 @@ export async function downloadFileFromServer(filePath, chunkSize = 2 * 1024 * 10
     withCredentials: true
   });
   const totalSize = Number(headRes.headers['content-length']);
-  if (!totalSize) throw new Error('无法获取文件大小');
+  if (!totalSize) return new Blob(); // 空文件直接返回空 Blob
 
   // 2. 分片下载
   const chunks = [];
