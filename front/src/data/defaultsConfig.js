@@ -3,6 +3,7 @@ import { parseSvg } from "@meta2d/svg"
 import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
+import Uploader from 'simple-uploader.js';
 import router  from "../router.js"
 
 import { ref } from "vue"
@@ -397,20 +398,25 @@ const menuFunc = {
   await  openFile(newFilePath)
  },
   async saveToserver() {
-  
- 
-    const jsonData = meta2d.data()
- 
-    const json = JSON.stringify(jsonData)
-    const blob = new Blob([json], { type: 'application/json' });
-    try {
-      const treePath = currentSelect.value;
-      const fileName = treePath.split('/').pop();
-       await uploadFileToServer(blob, fileName, treePath);
-       console.log("保存成功");
-    } catch (e) {
-      alert(e.message || "保存错误.");
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const json = meta2d.data();
+        const path = currentSelect.value;
+
+        if (!path) {
+          return reject('未选择任何文件，无法保存');
+        }
+
+        const content = typeof json === 'string' ? json : JSON.stringify(json, null, 2);
+        const blob = new Blob([content], { type: 'application/json' });
+        const file = new File([blob], path.split('/').pop(), { type: 'application/json' });
+        
+        const res = await uploadFileToServer(file, path);
+        resolve(res);
+      } catch (err) {
+        reject(err.message || '保存失败');
+      }
+    });
   },
     saveFile() {
       const jsonData = window.meta2d.data() // 获取数据 数据怎么来？怎么处理？
@@ -933,45 +939,92 @@ export const animateType = [
 ]
 
 /**
- * 通用大文件上传
- * @param {Blob|File} fileBlob - 要上传的文件内容
- * @param {string} fileName - 文件名
- * @param {string} relativePath - tree 结构的完整相对路径（如 projectData/dir1/dir2/file.json）
- * @returns {Promise<string>} - 返回后端保存的 file.path
+ * 使用 simple-uploader.js 分片上传
+ * @param {File|Blob} file - 要上传的文件
+ * @param {string} relativePath - 目标路径（如 projectData/xxx/xxx.json）
+ * @returns {Promise<string>} - 上传成功后返回后端保存的路径
  */
-export async function uploadFileToServer(fileBlob, fileName, relativePath) {
-  const formData = new FormData();
-  if (relativePath) {
-    formData.append('relativePath', relativePath); // 先加路径
-  }
-  formData.append('file', fileBlob, fileName); // 再加文件
-  const response = await axios.post('/api/uploadFile', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-    withCredentials: true
+export function uploadFileToServer(file, relativePath) {
+  return new Promise((resolve, reject) => {
+    const chunkSize = 2 * 1024 * 1024; // 2MB
+
+    const uploader = new Uploader({
+      target: '/api/uploadFileChunk',
+      chunkSize,
+      simultaneousUploads: 3,
+      testChunks: false, // 不做秒传判断
+      headers: {},
+      withCredentials: true,
+      // 每个分片附带额外字段，全部使用小写，便于后端统一解析
+      query: (fileObj, chunk) => {
+
+        return {
+          relativepath: relativePath
+        };
+      },
+    });
+
+    uploader.addFile(file);
+
+    // 每个分片返回都会触发 fileSuccess，这里统一解析
+    uploader.on('fileSuccess', (fileObj, message) => {
+      let data;
+      try {
+        data = typeof message === 'string' ? JSON.parse(message) : message;
+      } catch (_) {
+        data = {};
+      }
+
+      // 后端在最后一个分片会返回文件信息
+      if (data.success && data.file && data.file.path) {
+        resolve(data.file.path);
+      }
+    });
+
+    uploader.on('fileError', (_fileObj, message) => {
+      reject(message || '上传失败');
+    });
+
+    uploader.on('error', (message) => {
+      reject(message || '上传失败');
+    });
+
+    uploader.upload();
   });
-  if (response.data.success && response.data.file && response.data.file.path) {
-    return response.data.file.path; // 返回后端保存的路径
-  } else {
-    throw new Error(response.data.message || '上传失败');
-  }
 }
 
 /**
- * 通用大文件下载
+ * 分片下载大文件（保留原有实现，后端需支持 Range）
  * @param {string} filePath - 后端保存的 file.path
- * @returns {Promise<Blob>} - 返回文件内容的 Blob
+ * @param {number} [chunkSize=2*1024*1024] - 分片大小，默认2MB
+ * @returns {Promise<Blob>} - 返回完整文件 Blob
  */
-export async function downloadFileFromServer(filePath) {
-  const res = await fetch(`/api/downloadFile?filename=${encodeURIComponent(filePath)}`, {
-    method: 'GET',
-    credentials: 'include'
+export async function downloadFileFromServer(filePath, chunkSize = 2 * 1024 * 1024) {
+  // 1. 获取文件总大小
+  const headRes = await axios.head(`/api/downloadFile?filename=${encodeURIComponent(filePath)}`, {
+    withCredentials: true
   });
-  if (!res.ok) {
-    throw new Error('下载失败');
-  }
-  return await res.blob();
-}
+  const totalSize = Number(headRes.headers['content-length']);
+  if (!totalSize) throw new Error('无法获取文件大小');
 
+  // 2. 分片下载
+  const chunks = [];
+  let downloaded = 0;
+  while (downloaded < totalSize) {
+    const end = Math.min(downloaded + chunkSize - 1, totalSize - 1);
+    const res = await fetch(`/api/downloadFile?filename=${encodeURIComponent(filePath)}`, {
+      method: 'GET',
+      headers: { Range: `bytes=${downloaded}-${end}` },
+      credentials: 'include'
+    });
+    if (!res.ok && res.status !== 206) throw new Error('分片下载失败');
+    const blob = await res.blob();
+    chunks.push(blob);
+    downloaded = end + 1;
+  }
+  // 3. 合并 Blob
+  return new Blob(chunks);
+}
 /**
  * 获取指定文件的 switchChangHistory
  * @param {string} id - 文件路径

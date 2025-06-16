@@ -11,6 +11,9 @@ node_modules
 back/node_modules
 front/node_modules
 back/projectData/**/* 
+back/projectData/*
+back/uploads/**/* 
+back/uploads/* 
 node_modules/**/* 
 dist
 dist-ssr

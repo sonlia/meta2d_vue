@@ -70,7 +70,7 @@ const formattedData = computed(() => {
     return {
       timestamp: new Date(parseInt(timestamp)).toLocaleString(),
       added: (data.added || []).map(add => ({ ...add, text: add.text || '无' })),
-      removed: (data.removed || []).map(remove => ({ ...remove, text: add.text || '无' })),
+      removed: (data.removed || []).map(remove => ({ ...remove, text: remove.text || '无' })),
       updated: (data.updated || []).map(update => ({
         ...update,
         change: update.change,

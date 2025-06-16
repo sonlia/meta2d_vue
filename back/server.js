@@ -5,22 +5,31 @@ import fs from 'fs'; // 导入原生 fs 模块（支持同步方法）
 import { readdir, mkdir, writeFile, rm, rename } from 'fs/promises'; // 异步方法
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import { fileURLToPath } from 'url'; // 用于替换 __dirname
 import cors from 'cors';
 import compression from 'compression';
 import multer from 'multer';
+import { rimraf } from 'rimraf';
+
+// ES Module 中替代 __dirname 的方案
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors({
   credentials: true, // 允许携带 Cookie
-  origin: 'http://localhost:8080' // 前端地址
+  origin: (origin, callback) => {
+    // 在开发环境中，为了方便可以暂时允许所有来源
+    // TODO: 在生产环境中，应该设置为一个具体的白名单
+    callback(null, true);
+  },
 }));
-app.use(express.json({ limit: '10gb' }));
-app.use(express.urlencoded({ limit: '10gb', extended: true }));
+app.use(express.json({ limit: '100gb' }));
+app.use(express.urlencoded({ limit: '100gb', extended: true }));
 app.use(cookieParser()); // 解析 Cookie
 app.use(compression());
 
-// multer 配置为 memoryStorage
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 * 1024 } });
+ 
 
 // 单用户数据
 // 模拟用户数据
@@ -378,10 +387,18 @@ function compareData(oldList, newList) {
 function handleProjectDataHistory(oldContent, newContent) {
   //oldcontent  ，包含 projectData  以及 switchChangHistory
   if(!oldContent) return JSON.stringify({ projectData: JSON.parse(newContent), switchChangHistory: [] });
-  let oldData = JSON.parse(oldContent)?.projectData??{};
-  let switchChangHistory = JSON.parse(oldContent)?.switchChangHistory??[];
+  let oldData;
+  let switchChangHistory;
+  try {
+    const oldParsed = JSON.parse(oldContent);
+    oldData = oldParsed?.projectData ?? {};
+    switchChangHistory = oldParsed?.switchChangHistory ?? [];
+  } catch (e) {
+    oldData = {};
+    switchChangHistory = [];
+  }
  
-  const newData = JSON.parse(newContent)??{};
+  const newData = JSON.parse(newContent) ?? {};
   
   const filterData = (x) => {
     if (x?.flag == "switch") {
@@ -397,8 +414,7 @@ function handleProjectDataHistory(oldContent, newContent) {
 
  
     const diffData = compareData(oldDiffData, newDiffData);
-    console.log(diffData, "diffData==============");
-    if (diffData.length != 0) {
+     if (diffData.length != 0) {
       const time = Date.now();
       switchChangHistory.unshift({ [time]: diffData });
     }
@@ -407,51 +423,62 @@ function handleProjectDataHistory(oldContent, newContent) {
 }
 
  
-app.post('/api/uploadFile', checkAuth, upload.single('file'), async (req, res) => {
-  try {
-    const relativePath = req.body.relativePath;
-    if (!relativePath) {
-      return res.status(400).json({ success: false, message: '缺少 relativePath' });
+// 上传临时目录
+const UPLOAD_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR);
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const fileId = req.body.identifier;
+    if (!fileId) {
+      return cb(new Error('缺少 identifier'), null);
     }
-    const filePath = path.join('./', relativePath);
-    const backupFilePath = path.join(path.dirname(filePath), `bak-${path.basename(filePath)}`);
-
-    // 1. 如果原文件存在，先备份
-    if (fs.existsSync(filePath)) {
-      try {
-        await fs.promises.copyFile(filePath, backupFilePath);
-        console.log(`Backup created: ${backupFilePath}`);
-      } catch (e) { console.error('备份失败', e); }
+    const chunkDir = path.join(UPLOAD_DIR, fileId);
+    if (!fs.existsSync(chunkDir)) {
+      fs.mkdirSync(chunkDir, { recursive: true });
     }
-
-    // 2. 读取旧数据（bak 文件）
-    let oldContent = "";
-    if (fs.existsSync(backupFilePath)) {
-      try {
-        oldContent = await fs.promises.readFile(backupFilePath, 'utf8');
-      } catch (e) {}
-    }
-
-    // 3. 获取新数据（直接用 req.file.buffer）
-    const newContent = req.file.buffer.toString('utf8');
-    // 4. 合并历史
-    const finalContent = handleProjectDataHistory(oldContent, newContent);
-
-    // 5. 自动创建目录并写入
-    fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    await fs.promises.writeFile(filePath, finalContent, { encoding: 'utf8' });
-
-    // 6. 返回
-    res.json({ success: true, message: '文件上传成功', file: { path: relativePath, size: req.file.size, originalname: req.file.originalname } });
-  } catch (err) {
-    console.error(err);
-    res.json({ success: false, message: err.message });
+    cb(null, chunkDir);
+  },
+  filename: function (req, file, cb) {
+    const chunkNumber = req.body.chunkNumber;
+    cb(null, String(chunkNumber ? chunkNumber - 1 : 0));
   }
 });
 
+const chunkUpload = multer({ storage });
 
+// 接收文件分片
+app.post('/api/uploadFileChunk', checkAuth, chunkUpload.single('file'), async (req, res) => {
+  try {
+    // 解析并兼容不同字段命名
+    const upFileName = req.body.filename ;
+    const upRelativePath = req.body.relativepath ;
+    // simple-uploader 内置字段
+    const upFileId = req.body.identifier;
+    const upTotalChunks = Number(req.body.totalChunks);
+    const upChunkIndex = Number(req.body.chunkNumber ? req.body.chunkNumber - 1 : 0);
+     // 判断是否为最后一个分片或 0 字节文件
+    const isLastChunk = Number.isFinite(upTotalChunks) && (upChunkIndex + 1 === upTotalChunks);
+    const isZeroChunk = upTotalChunks === 0;
 
-// 下载大文件接口
+    if (isLastChunk || isZeroChunk) {
+      const result = await mergeFileChunksInternal({ fileName: upFileName, relativePath: upRelativePath, fileId: upFileId, totalChunks: upTotalChunks });
+      return res.json(result);
+    }
+
+    // 中间分片直接返回成功
+    res.json({ success: true, message: '分片上传成功' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+ 
+
+ 
 // 前端请求 /api/downloadFile?filename=xxx
 app.get('/api/downloadFile', checkAuth, async (req, res) => {
   const { filename } = req.query;
@@ -468,16 +495,32 @@ app.get('/api/downloadFile', checkAuth, async (req, res) => {
   }
   // 获取文件大小
   const stat = fs.statSync(filePath);
+  res.setHeader('Accept-Ranges', 'bytes'); // 告知客户端支持范围请求
   res.setHeader('Content-Type', 'application/octet-stream');
   res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(filename))}`);
-  res.setHeader('Content-Length', stat.size);
-  // 用流方式读取并传输
-  const readStream = fs.createReadStream(filePath);
-  readStream.pipe(res);
-  // 错误处理
-  readStream.on('error', (err) => {
-    res.status(500).json({ success: false, message: '文件读取出错' });
-  });
+  
+  const range = req.headers.range;
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+    const chunksize = (end - start) + 1;
+    const file = fs.createReadStream(filePath, { start, end });
+    res.writeHead(206, {
+      'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+      'Content-Length': chunksize,
+    });
+    file.pipe(res);
+  } else {
+    res.setHeader('Content-Length', stat.size);
+    // 用流方式读取并传输
+    const readStream = fs.createReadStream(filePath);
+    readStream.pipe(res);
+    // 错误处理
+    readStream.on('error', (err) => {
+      res.status(500).json({ success: false, message: '文件读取出错' });
+    });
+  }
 });
 
 // 获取指定文件的 switchChangHistory
@@ -506,6 +549,97 @@ app.use(express.static(distDir));
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(distDir, 'index.html'));
 });
+
+
+ 
+async function mergeFileChunksInternal({ fileName, relativePath, fileId, totalChunks }) {
+  if (!relativePath || !fileId || totalChunks === undefined || totalChunks === null || !fileName) {
+    throw new Error('缺少必要参数');
+  }
+  const chunkDir = path.join(UPLOAD_DIR, fileId);
+  const filePath = path.join('./', relativePath);
+  const backupFilePath = path.join(path.dirname(filePath), `bak-${path.basename(filePath)}`);
+  const mergedFilePath = path.join(chunkDir, fileName);
+   try {
+    if (Number(totalChunks) > 0) {
+      const maxAttempts = 5;
+      let attempts = 0;
+      let chunkPaths = [];
+      while (attempts < maxAttempts) {
+        if (fs.existsSync(chunkDir)) {
+          // 仅统计纯数字命名的分片文件，忽略已合并文件或其他残留
+          chunkPaths = fs.readdirSync(chunkDir).filter(name => /^\d+$/.test(name));
+          if (chunkPaths.length >= Number(totalChunks)) {
+            break; // 所有分片文件到齐或超出
+          }
+        }
+        attempts++;
+        if (attempts >= maxAttempts) {
+          await rimraf(chunkDir);
+          throw new Error(`分片数量不匹配，应有 ${totalChunks} 个，实际找到 ${chunkPaths.length} 个。请重新上传。`);
+        }
+        await new Promise((r) => setTimeout(r, 300));
+      }
+      chunkPaths.sort((a, b) => Number(a) - Number(b));
+      const writeStream = fs.createWriteStream(mergedFilePath);
+      for (const idx of chunkPaths) {
+        const chunkPath = path.join(chunkDir, idx);
+        const readStream = fs.createReadStream(chunkPath);
+        await new Promise((resolve, reject) => {
+          readStream.pipe(writeStream, { end: false });
+          readStream.on('end', resolve);
+          readStream.on('error', reject);
+        });
+      }
+      await new Promise((resolve, reject) => {
+        writeStream.on('finish', resolve);
+        writeStream.on('error', reject);
+        writeStream.end();
+      });
+    } else {
+      if (!fs.existsSync(chunkDir)) {
+        fs.mkdirSync(chunkDir, { recursive: true });
+      }
+      await fs.promises.writeFile(mergedFilePath, '');
+    }
+
+    if (fs.existsSync(filePath)) {
+      try {
+        await fs.promises.copyFile(filePath, backupFilePath);
+        console.log(`Backup created: ${backupFilePath}`);
+      } catch (e) {
+        console.error('备份失败', e);
+      }
+    }
+
+    let oldContent = '';
+    if (fs.existsSync(backupFilePath)) {
+      try {
+        oldContent = await fs.promises.readFile(backupFilePath, 'utf8');
+      } catch (e) {}
+    }
+
+    const newContent = await fs.promises.readFile(mergedFilePath, 'utf8');
+    const newFileSize = (await fs.promises.stat(mergedFilePath)).size;
+    const finalContent = handleProjectDataHistory(oldContent, newContent);
+
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    await fs.promises.writeFile(filePath, finalContent, { encoding: 'utf8' });
+
+    await rimraf(chunkDir);
+
+    return { success: true, message: '文件上传成功', file: { path: relativePath, size: newFileSize, originalname: fileName } };
+  } catch (err) {
+    try {
+      await rimraf(chunkDir);
+    } catch (_) {}
+    throw err;
+  }
+}
+
+
+
+
 // 检查端口是否被占用并清理
 function killPort(port) {
   try {
@@ -522,5 +656,5 @@ function killPort(port) {
 }
 
 // 启动前检查并清理 3000 端口
-killPort(3000);
+killPort(3000); // 暂时禁用此功能，因为它可能导致在某些环境下启动失败
 app.listen(3000, "0.0.0.0",() => console.log('Server is running on port 3000'));
