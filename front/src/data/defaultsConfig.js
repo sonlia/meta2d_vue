@@ -430,7 +430,7 @@ const menuFunc = {
     },
     openMagnifier() {
       if (window.meta2d.canvas.magnifierCanvas.magnifier) {
-        // 判断放大镜状态
+      
         window.meta2d.hideMagnifier() // 关闭放大镜
       } else {
         window.meta2d.showMagnifier() // 打开放大镜

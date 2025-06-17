@@ -186,7 +186,7 @@ const saveCurrentComponentAsIcon = async () => {
   window.ElMessage?.success('保存成功');
 };
 
-// 编辑状态下保存图元（覆盖）
+ 
 const saveEditedIcon = async () => {
   if (!editingIcon.value) return;
   const rawItem = toRaw(editingIcon.value);

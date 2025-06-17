@@ -18,12 +18,25 @@ const showChildRef = ref(0);
 watch(
   () => activePen.target,
   (val) => {
-    showChildRef.value =  {
-            list: Array.from({ length: activePen.target.length }, (_, i) => ({
-              label: i  + "",
-              value: i ,
-            })),
-          };
+    let count = 1;
+    let children = [];
+    if (Array.isArray(activePen.target)) {
+      // 多选时取第一个的 children
+      if (activePen.target[0] && Array.isArray(activePen.target[0].children)) {
+        children = activePen.target[0].children;
+      }
+    } else if (activePen.target && typeof activePen.target === 'object') {
+      if (Array.isArray(activePen.target.children)) {
+        children = activePen.target.children;
+      }
+    }
+    count = children.length || 1;
+    showChildRef.value = {
+      list: Array.from({ length: count }, (_, i) => ({
+        label: i + "",
+        value: i,
+      })),
+    };
   },
   { immediate: true }
 );
@@ -88,6 +101,7 @@ onMounted(() => {
         mergeProps(m, activePen.target);
         const penRect = meta2d.getPenRect(toRaw(activePen.target));
         Object.assign(m, penRect);
+        console.log(args,"test");
       }
     }
   });
