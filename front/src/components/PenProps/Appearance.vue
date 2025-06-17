@@ -1068,6 +1068,7 @@ function sameSize() {
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-left: 10px;
 }
 .align-toolbar {
   display: flex;
