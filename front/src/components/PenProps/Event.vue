@@ -14,12 +14,16 @@ const showJsEditor = ref(false);
 const jsEditorValue = ref("");
 const showGlobalJsEditor = ref(false);
 const globalJsValue = ref('');
+const showWhereEditor = ref(false);
+const whereEditorValue = ref("");
+const whereTypeValue = ref("");
 let currentDep = null;
 // 新增：当前是否为新增事件模式
 const isAddMode = ref(false);
 // 当前选中的事件索引
 const currentEventIndex = ref(-1);
 let editingEventIdx = ref(-1);
+let editingWhereIdx = ref(-1);
 
 onMounted(()=>{
   meta2d.on('active',(pens)=>{
@@ -147,6 +151,31 @@ function autoSave() {
   }
 }
 
+function openWhereEditor(ev, idx) {
+  whereEditorValue.value = (ev.where && ev.where.fnJs) ? ev.where.fnJs : '';
+  whereTypeValue.value = (ev.where && ev.where.type) ? ev.where.type : '';
+  editingWhereIdx.value = idx;
+  showWhereEditor.value = true;
+}
+
+function onConfirmWhereEdit() {
+  if (editingWhereIdx.value >= 0 && activePen.events[editingWhereIdx.value]) {
+    if (!activePen.events[editingWhereIdx.value].where) {
+      activePen.events[editingWhereIdx.value].where = {};
+    }
+    activePen.events[editingWhereIdx.value].where.fnJs = whereEditorValue.value;
+    activePen.events[editingWhereIdx.value].where.type = whereTypeValue.value;
+    autoSave();
+  }
+  showWhereEditor.value = false;
+  editingWhereIdx.value = -1;
+}
+
+function onCancelWhereEdit() {
+  showWhereEditor.value = false;
+  editingWhereIdx.value = -1;
+}
+
 </script>
 
 <template>
@@ -183,6 +212,11 @@ function autoSave() {
               <el-input v-model="ev.value" placeholder="请输入id/tag" @input="autoSave"/>
             </template>
           </el-form-item>
+          <!-- 触发条件按钮及显示 -->
+          <el-form-item label="触发条件">
+            <el-button type="primary" size="mini" @click="openWhereEditor(ev, idx)">编辑触发条件</el-button>
+            <span v-if="ev.where && ev.where.fnJs" style="margin-left:8px;color:#888;max-width:120px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle;">{{ ev.where.fnJs }}</span>
+          </el-form-item>
           <!-- 删除按钮悬浮显示 -->
           <el-button v-if="ev._hover" class="event-item-delete" type="danger" size="mini" @click="removeEventByIndex(idx)">删除</el-button>
         </el-form>
@@ -196,9 +230,29 @@ function autoSave() {
         :rows="10"
         placeholder="请输入JS代码"
       />
+      <span>可获取pen、params和context参数</span>
       <div style="text-align:center;margin-top:10px;">
         <el-button type="primary" @click="onConfirmJsEdit">确定</el-button>
         <el-button @click="onCancelJsEdit">取消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 触发条件编辑弹窗 -->
+    <el-dialog v-model="showWhereEditor" title="编辑触发条件JS" width="600px">
+      <el-input
+        v-model="whereTypeValue"
+        placeholder="请输入类型(type)"
+        style="margin-bottom: 10px;"
+      />
+      <el-input
+        v-model="whereEditorValue"
+        type="textarea"
+        :rows="10"
+        placeholder='通过js代码返回值触发条件，如：return pen.id === "xxx"'
+      />
+      <span>可获取pen、context参数，需返回true或false</span>
+      <div style="text-align:center;margin-top:10px;">
+        <el-button type="primary" @click="onConfirmWhereEdit">确定</el-button>
+        <el-button @click="onCancelWhereEdit">取消</el-button>
       </div>
     </el-dialog>
     <!-- 全局JS编辑器弹窗 -->
