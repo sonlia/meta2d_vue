@@ -11,7 +11,7 @@ let depList = computed(()=>{
 })
 let b = reactive(eventBehavior)
 const showJsEditor = ref(false);
-const jsEditorValue = ref('');
+const jsEditorValue = ref("");
 const showGlobalJsEditor = ref(false);
 const globalJsValue = ref('');
 let currentDep = null;
@@ -19,6 +19,7 @@ let currentDep = null;
 const isAddMode = ref(false);
 // 当前选中的事件索引
 const currentEventIndex = ref(-1);
+let editingEventIdx = ref(-1);
 
 onMounted(()=>{
   meta2d.on('active',(pens)=>{
@@ -100,17 +101,9 @@ function confirmEvent() {
   }
 }
 
-function openJsEditor(dep) {
- 
-  // 优先读取 event.value 作为 js 代码
-  let jsVal = '';
-  if (dep.bindProp === 'value') {
-    jsVal = event.value || '';
-  } else {
-    jsVal = dep.bindData || '';
-  }
-  jsEditorValue.value = jsVal;
-  currentDep = dep;
+function openJsEditorForEvent(ev, idx) {
+  jsEditorValue.value = ev.value || '';
+  editingEventIdx.value = idx;
   showJsEditor.value = true;
 }
 
@@ -134,16 +127,24 @@ event.action =  EventAction.GlobalFn
   showGlobalJsEditor.value = false;
 }
 
-function onConfirm() {
-
- event.action = EventAction.JS
-  event.value = jsEditorValue.value
-  
+function onConfirmJsEdit() {
+  if (editingEventIdx.value >= 0 && activePen.events[editingEventIdx.value]) {
+    activePen.events[editingEventIdx.value].value = jsEditorValue.value;
+    autoSave();
+  }
   showJsEditor.value = false;
+  editingEventIdx.value = -1;
 }
 
-function onCancel() {
+function onCancelJsEdit() {
   showJsEditor.value = false;
+  editingEventIdx.value = -1;
+}
+
+function autoSave() {
+  if (window.meta2d && activePen.id) {
+    window.meta2d.setValue({ id: activePen.id, events: activePen.events });
+  }
 }
 
 </script>
@@ -169,13 +170,13 @@ function onCancel() {
               <el-option v-for="a in eventBehavior" :key="a.behavior" :label="a.name" :value="a.behavior"/>
             </el-select>
           </el-form-item>
-          <el-form-item label="id/tag">
-            <!-- 执行全局js时显示输入框，执行js时显示编辑按钮，其它行为显示普通输入框 -->
+          <!-- 附属数据label和内容根据行为类型动态变化 -->
+          <el-form-item :label="ev.action === EventAction.GlobalFn ? '全局函数' : (ev.action === EventAction.JS ? '' : 'id/tag')">
             <template v-if="ev.action === EventAction.GlobalFn">
-              <el-input v-model="ev.value" placeholder="请输入全局JS代码" @input="autoSave" :rows="6" />
+              <el-input v-model="ev.value" placeholder="请输入全局函数" @input="autoSave"   :rows="6" />
             </template>
             <template v-else-if="ev.action === EventAction.JS">
-              <el-button type="primary" size="mini" @click="openJsEditor(ev)">编辑JS代码</el-button>
+              <el-button type="primary" size="mini" @click="openJsEditorForEvent(ev, idx)">编辑JS代码</el-button>
               <span v-if="ev.value && ev.value.length > 0" style="margin-left:8px;color:#888;">已编辑</span>
             </template>
             <template v-else>
@@ -196,8 +197,8 @@ function onCancel() {
         placeholder="请输入JS代码"
       />
       <div style="text-align:center;margin-top:10px;">
-        <el-button type="primary" @click="onConfirm">确定</el-button>
-        <el-button @click="onCancel">取消</el-button>
+        <el-button type="primary" @click="onConfirmJsEdit">确定</el-button>
+        <el-button @click="onCancelJsEdit">取消</el-button>
       </div>
     </el-dialog>
     <!-- 全局JS编辑器弹窗 -->
