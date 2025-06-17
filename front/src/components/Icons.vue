@@ -171,7 +171,8 @@ const saveCurrentComponentAsIcon = async () => {
     window.ElMessage?.warning('请先在画布选择一个组件');
     return;
   }
-  const pens = window.meta2d.toComponent(selected);
+  const allPen= meta2d.canvas.getAllByPens(selected)
+  const pens = window.meta2d.toComponent(allPen);
   const rawImage = window.meta2d.activeToPng();
   const resizedImage = await resizeBase64Img(rawImage, 50, 50);
   const data = {
