@@ -101,7 +101,7 @@ onMounted(() => {
         mergeProps(m, activePen.target);
         const penRect = meta2d.getPenRect(toRaw(activePen.target));
         Object.assign(m, penRect);
-        console.log(args,"test");
+        
       }
     }
   });
