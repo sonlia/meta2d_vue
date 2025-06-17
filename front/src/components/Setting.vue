@@ -78,44 +78,5 @@ onMounted(()=>{
   overflow: auto;
   box-shadow: 0 2px 4px 0 #dad7d7;
 }
-:deep(.el-tabs__header){
-  margin: 0;
-}
-:deep(.el-tabs__content::-webkit-scrollbar) {
-  /*滚动条整体样式*/
-  width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
-  height: 1px;
-}
-:deep(.el-tabs__content::-webkit-scrollbar-thumb) {
-  /*滚动条里面小方块*/
-  border-radius: 10px;
-  height: 20px;
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  background: #4e4e4e;
-}
-:deep(.el-tabs__content::-webkit-scrollbar-track) {
-  /*滚动条里面轨道*/
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background: #ffffff;
-}
-.tz_props{
-  display: flex;
-  width: 100%;
-}
-.ty_props{
-  display: flex;
-  width: 100%;
-}
-:deep(.el-tabs__header){
-  height: 40px;
-}
-:deep(.el-tabs__content){
-  flex: 1;
-  overflow: auto;
-}:deep(.el-tabs){
-  display: flex;
-  flex-direction: column;
-  width: 100%;
- }
+ 
 </style>

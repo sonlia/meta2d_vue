@@ -1,5 +1,7 @@
 <template>
     <div class="pen-tag-box">
+      
+      <div  style="color: #666; margin-bottom: 10px;">ID: {{ activePenId }}</div>
       <div class="pen-tag-row">
         <span class="pen-tag-label">默认标签：</span>
         <el-checkbox-group v-model="checkedSwitchTags" @change="onSwitchGroupChange" class="tag-switch-group">
@@ -24,7 +26,7 @@
   </template>
   
   <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, onMounted, computed } from 'vue';
   
   const defaultSwitchTags = ['power', 'switch'];
   const checkedSwitchTags = ref([]);
@@ -33,6 +35,14 @@
   // 1. 本地定义 activePen 和 multiPen
   let activePen = reactive({ target: [] });
   let multiPen = ref(false);
+  
+  const activePenId = computed(() => {
+    if (multiPen.value) {
+      return activePen.target && activePen.target[0] ? activePen.target[0].id : '';
+    } else {
+      return activePen.target && activePen.target.id ? activePen.target.id : '';
+    }
+  });
   
   onMounted(() => {
     // 2. 监听 meta2d 的 active 事件
