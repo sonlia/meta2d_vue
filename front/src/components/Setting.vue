@@ -74,9 +74,9 @@ onMounted(()=>{
   position: relative;
   display: flex;
   width: 350px;
-  padding: 16px 0 0 16px;
+ 
   overflow: auto;
-  box-shadow: 0 2px 4px 0 #dad7d7;
+ 
 }
  
 </style>

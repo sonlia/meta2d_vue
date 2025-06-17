@@ -243,8 +243,7 @@ function onCancel() {
 }
 .event-item-delete {
   position: absolute;
-  top: 8px;
-  right: -12px;
+ top: 0;
   z-index: 2;
   display: inline-block;
 }
