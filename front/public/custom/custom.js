@@ -1,5 +1,6 @@
 import { parseSvg } from "@meta2d/svg";
 
+import { ElMessage } from "element-plus";
 
 const user = {
   tag: "icon",
@@ -14,8 +15,7 @@ const user = {
     width: 100,
     height: 100,
     text: "用户",
-    path: "M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z"
-    ,
+    path: "M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z",
   },
 };
 const didaoSwitch = {
@@ -23,353 +23,349 @@ const didaoSwitch = {
   name: "地刀",
   icon: "sgcc sgcc-jiedidaozhahe",
   type: "icon",
-  data:[
+  data: [
     {
-        "width": 1,
-        "height": 1,
-        "name": "image",
-        "iconFamily": "sgcc",
-        "icon": "",
-        "id": "5a969121",
-        "parentId": "42ed772c",
-        "children": [],
-        "x": 0,
-        "y": 0,
-        "lineWidth": 1,
-        "fontSize": 12,
-        "lineHeight": 1.5,
-        "anchors": [
-            {
-                "x": 0.5,
-                "y": 0,
-                "id": "0",
-                "penId": "5a969121"
-            },
-            {
-                "x": 1,
-                "y": 0.5,
-                "id": "1",
-                "penId": "5a969121"
-            },
-            {
-                "x": 0.5,
-                "y": 1,
-                "id": "2",
-                "penId": "5a969121"
-            },
-            {
-                "x": 0,
-                "y": 0.5,
-                "id": "3",
-                "penId": "5a969121"
-            }
-        ],
-        "rotate": 0,
-        "lineAnimateImages": [],
-        "iconColor": "rgba(48, 238, 111, 1)",
-        "disableAnchor": true,
-        "ex": 1,
-        "ey": 1,
-        "locked": 0,
-        "visible": true
-    },
-    {
-        "width": 1,
-        "height": 1,
-        "name": "image",
-        "iconFamily": "sgcc",
-        "icon": "",
-        "id": "083b843",
-        "parentId": "42ed772c",
-        "children": [],
-        "x": 0,
-        "y": 0,
-        "lineWidth": 1,
-        "fontSize": 12,
-        "lineHeight": 1.5,
-        "anchors": [
-            {
-                "x": 0.5,
-                "y": 0,
-                "id": "0",
-                "penId": "083b843"
-            },
-            {
-                "x": 1,
-                "y": 0.5,
-                "id": "1",
-                "penId": "083b843"
-            },
-            {
-                "x": 0.5,
-                "y": 1,
-                "id": "2",
-                "penId": "083b843"
-            },
-            {
-                "x": 0,
-                "y": 0.5,
-                "id": "3",
-                "penId": "083b843"
-            }
-        ],
-        "rotate": 0,
-        "lineAnimateImages": [],
-        "disabledColor": "",
-        "color": "rgba(252, 8, 8, 1)",
-        "disableAnchor": true,
-        "ex": 1,
-        "ey": 1,
-        "locked": 0,
-        "visible": true
-    },
-    {
-        "id": "42ed772c",
-        "name": "combine",
-        "x": 248,
-        "y": 209.33333333333337,
-        "ex": 541,
-        "ey": 351.33333333333337,
-        "width": 120,
-        "height": 120,
-        "center": {
-            "x": 481,
-            "y": 291.33333333333337
+      width: 1,
+      height: 1,
+      name: "image",
+      iconFamily: "sgcc",
+      icon: "",
+      id: "5a969121",
+      parentId: "42ed772c",
+      children: [],
+      x: 0,
+      y: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "5a969121",
         },
-        "children": [
-            "5a969121",
-            "083b843"
-        ],
-        "showChild": 0,
-        "lineWidth": 1,
-        "fontSize": 12,
-        "lineHeight": 1.5,
-        "anchors": [
-            {
-                "x": 0.5,
-                "y": 0,
-                "id": "0",
-                "penId": "42ed772c"
-            },
-            {
-                "x": 1,
-                "y": 0.5,
-                "id": "1",
-                "penId": "42ed772c"
-            },
-            {
-                "x": 0.5,
-                "y": 1,
-                "id": "2",
-                "penId": "42ed772c"
-            },
-            {
-                "x": 0,
-                "y": 0.5,
-                "id": "3",
-                "penId": "42ed772c"
-            }
-        ],
-        "rotate": 0,
-        "lineAnimateImages": [],
-        "events": [
-            {
-                "where": {
-                    "type": null
-                },
-                "name": "click",
-                "action": 5,
-                "value": "context.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
-                "fn": null
-            },
-            {
-                "where": {
-                    "type": null
-                },
-                "name": "click",
-                "action": 6,
-                "value": "updateColor",
-                "fn": null
-            }
-        ]
-    }
-],
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "5a969121",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "5a969121",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "5a969121",
+        },
+      ],
+      rotate: 0,
+      lineAnimateImages: [],
+      iconColor: "rgba(48, 238, 111, 1)",
+      disableAnchor: true,
+      ex: 1,
+      ey: 1,
+      locked: 0,
+      visible: true,
+    },
+    {
+      width: 1,
+      height: 1,
+      name: "image",
+      iconFamily: "sgcc",
+      icon: "",
+      id: "083b843",
+      parentId: "42ed772c",
+      children: [],
+      x: 0,
+      y: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "083b843",
+        },
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "083b843",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "083b843",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "083b843",
+        },
+      ],
+      rotate: 0,
+      lineAnimateImages: [],
+      disabledColor: "",
+      color: "rgba(252, 8, 8, 1)",
+      disableAnchor: true,
+      ex: 1,
+      ey: 1,
+      locked: 0,
+      visible: true,
+    },
+    {
+      id: "42ed772c",
+      name: "combine",
+      x: 248,
+      y: 209.33333333333337,
+      ex: 541,
+      ey: 351.33333333333337,
+      width: 120,
+      height: 120,
+      center: {
+        x: 481,
+        y: 291.33333333333337,
+      },
+      children: ["5a969121", "083b843"],
+      showChild: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "42ed772c",
+        },
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "42ed772c",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "42ed772c",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "42ed772c",
+        },
+      ],
+      rotate: 0,
+      lineAnimateImages: [],
+      events: [
+        {
+          where: {
+            type: null,
+          },
+          name: "click",
+          action: 5,
+          value:
+            "context.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          fn: null,
+        },
+        {
+          where: {
+            type: null,
+          },
+          name: "click",
+          action: 6,
+          value: "updateColor",
+          fn: null,
+        },
+      ],
+    },
+  ],
 };
 const circuitBreakerSwitch = {
   tag: "icon",
   name: "隔离开关",
   icon: "sgcc sgcc-gelikaiguanfen",
   type: "icon",
-  data:[
+  data: [
     {
-        "width": 1,
-        "height": 1,
-        "name": "image",
-        "iconFamily": "sgcc",
-        "icon": "",
-        "id": "b85948",
-        "parentId": "082ab6f",
-        "children": [],
-        "x": 0,
-        "y": 0,
-        "lineWidth": 1,
-        "fontSize": 12,
-        "lineHeight": 1.5,
-        "anchors": [
-            {
-                "x": 0.5,
-                "y": 0,
-                "id": "0",
-                "penId": "b85948"
-            },
-            {
-                "x": 1,
-                "y": 0.5,
-                "id": "1",
-                "penId": "b85948"
-            },
-            {
-                "x": 0.5,
-                "y": 1,
-                "id": "2",
-                "penId": "b85948"
-            },
-            {
-                "x": 0,
-                "y": 0.5,
-                "id": "3",
-                "penId": "b85948"
-            }
-        ],
-        "rotate": 0,
-        "lineAnimateImages": [],
-        "color": "rgba(48, 238, 111, 1)",
-        "ex": 1,
-        "ey": 1,
-        "locked": 0,
-        "visible": true,
-        "disableAnchor": true
-    },
-    {
-        "width": 1,
-        "height": 1,
-        "name": "image",
-        "iconFamily": "sgcc",
-        "icon": "",
-        "id": "26990905",
-        "parentId": "082ab6f",
-        "children": [],
-        "x": 0,
-        "y": 0,
-        "lineWidth": 1,
-        "fontSize": 12,
-        "lineHeight": 1.5,
-        "anchors": [
-            {
-                "x": 0.5,
-                "y": 0,
-                "id": "0",
-                "penId": "26990905"
-            },
-            {
-                "x": 1,
-                "y": 0.5,
-                "id": "1",
-                "penId": "26990905"
-            },
-            {
-                "x": 0.5,
-                "y": 1,
-                "id": "2",
-                "penId": "26990905"
-            },
-            {
-                "x": 0,
-                "y": 0.5,
-                "id": "3",
-                "penId": "26990905"
-            }
-        ],
-        "rotate": 0,
-        "lineAnimateImages": [],
-        "color": "rgba(255, 0, 0, 1)",
-        "ex": 1,
-        "ey": 1,
-        "locked": 0,
-        "visible": true,
-        "disableAnchor": true
-    },
-    {
-        "id": "082ab6f",
-        "name": "combine",
-        "x": 373,
-        "y": 235,
-        "ex": 493,
-        "ey": 355,
-        "width": 120,
-        "height": 120,
-        "center": {
-            "x": 433,
-            "y": 295
+      width: 1,
+      height: 1,
+      name: "image",
+      iconFamily: "sgcc",
+      icon: "",
+      id: "b85948",
+      parentId: "082ab6f",
+      children: [],
+      x: 0,
+      y: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "b85948",
         },
-        "children": [
-            "b85948",
-            "26990905"
-        ],
-        "showChild": 0,
-        "lineWidth": 1,
-        "fontSize": 12,
-        "lineHeight": 1.5,
-        "anchors": [
-            {
-                "x": 0.5,
-                "y": 0,
-                "id": "0",
-                "penId": "082ab6f"
-            },
-            {
-                "x": 1,
-                "y": 0.5,
-                "id": "1",
-                "penId": "082ab6f"
-            },
-            {
-                "x": 0.5,
-                "y": 1,
-                "id": "2",
-                "penId": "082ab6f"
-            },
-            {
-                "x": 0,
-                "y": 0.5,
-                "id": "3",
-                "penId": "082ab6f"
-            }
-        ],
-        "rotate": 0,
-        "lineAnimateImages": [],
-        "events": [
-            {
-                "where": {
-                    "type": null
-                },
-                "name": "click",
-                "action": 5,
-                "value": "context.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
-                "fn": null
-            },
-            {
-                "where": {
-                    "type": null
-                },
-                "name": "click",
-                "action": 6,
-                "value": "updateColor",
-                "fn": null
-            }
-        ]
-    }
-],
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "b85948",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "b85948",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "b85948",
+        },
+      ],
+      rotate: 0,
+      lineAnimateImages: [],
+      color: "rgba(48, 238, 111, 1)",
+      ex: 1,
+      ey: 1,
+      locked: 0,
+      visible: true,
+      disableAnchor: true,
+    },
+    {
+      width: 1,
+      height: 1,
+      name: "image",
+      iconFamily: "sgcc",
+      icon: "",
+      id: "26990905",
+      parentId: "082ab6f",
+      children: [],
+      x: 0,
+      y: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "26990905",
+        },
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "26990905",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "26990905",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "26990905",
+        },
+      ],
+      rotate: 0,
+      lineAnimateImages: [],
+      color: "rgba(255, 0, 0, 1)",
+      ex: 1,
+      ey: 1,
+      locked: 0,
+      visible: true,
+      disableAnchor: true,
+    },
+    {
+      id: "082ab6f",
+      name: "combine",
+      x: 373,
+      y: 235,
+      ex: 493,
+      ey: 355,
+      width: 120,
+      height: 120,
+      center: {
+        x: 433,
+        y: 295,
+      },
+      children: ["b85948", "26990905"],
+      showChild: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "082ab6f",
+        },
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "082ab6f",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "082ab6f",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "082ab6f",
+        },
+      ],
+      rotate: 0,
+      lineAnimateImages: [],
+      events: [
+        {
+          where: {
+            type: null,
+          },
+          name: "click",
+          action: 5,
+          value:
+            "context.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          fn: null,
+        },
+        {
+          where: {
+            type: null,
+          },
+          name: "click",
+          action: 6,
+          value: "updateColor",
+          fn: null,
+        },
+      ],
+    },
+  ],
 };
 
 const loadSwitch = {
@@ -380,188 +376,186 @@ const loadSwitch = {
   text: "断路器  ",
   data: [
     {
-      "anchors": [
+      anchors: [
         {
-          "id": "0",
-          "penId": "55bef82a",
-          "x": 0.5,
-          "y": 0
+          id: "0",
+          penId: "55bef82a",
+          x: 0.5,
+          y: 0,
         },
         {
-          "id": "1",
-          "penId": "55bef82a",
-          "x": 1,
-          "y": 0.5
+          id: "1",
+          penId: "55bef82a",
+          x: 1,
+          y: 0.5,
         },
         {
-          "id": "2",
-          "penId": "55bef82a",
-          "x": 0.5,
-          "y": 1
+          id: "2",
+          penId: "55bef82a",
+          x: 0.5,
+          y: 1,
         },
         {
-          "id": "3",
-          "penId": "55bef82a",
-          "x": 0,
-          "y": 0.5
-        }
+          id: "3",
+          penId: "55bef82a",
+          x: 0,
+          y: 0.5,
+        },
       ],
-      "center": {
-        "x": 228.5999999999999,
-        "y": 442.14285714285717
+      center: {
+        x: 228.5999999999999,
+        y: 442.14285714285717,
       },
-      "children": [
-        "365c8da",
-        "b059964"
-      ],
+      children: ["365c8da", "b059964"],
 
-      "events": [
+      events: [
         {
-          "where": {
-            "type": null
+          where: {
+            type: null,
           },
-          "name": "click",
-          "action": 5,
-          "value": "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
-          "fn": null
+          name: "click",
+          action: 5,
+          value:
+            "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          fn: null,
         },
         {
-          "where": {
-            "type": null
+          where: {
+            type: null,
           },
-          "name": "click",
-          "action": 6,
-          "value": "updateColor",
-          "fn": null
-        }
+          name: "click",
+          action: 6,
+          value: "updateColor",
+          fn: null,
+        },
       ],
-      "ex": 288.5999999999999,
-      "ey": 502.1428571428572,
-      "fontSize": 12,
-      "height": 120.00000000000003,
-      "id": "55bef82a",
-      "lineHeight": 1.5,
-      "lineWidth": 1,
-      "name": "combine",
-      "rotate": 0,
-      "showChild": 0,
-      "width": 120.00000000000003,
-      "x": 168.5999999999999,
-      "y": 382.14285714285717,
-      "componentId": "01948d77-0662-700a-9b80-340bc2fe4a9e",
-      "originId": "168de522",
-      "lineAnimateImages": [],
-      "text": "断路器"
+      ex: 288.5999999999999,
+      ey: 502.1428571428572,
+      fontSize: 12,
+      height: 120.00000000000003,
+      id: "55bef82a",
+      lineHeight: 1.5,
+      lineWidth: 1,
+      name: "combine",
+      rotate: 0,
+      showChild: 0,
+      width: 120.00000000000003,
+      x: 168.5999999999999,
+      y: 382.14285714285717,
+      componentId: "01948d77-0662-700a-9b80-340bc2fe4a9e",
+      originId: "168de522",
+      lineAnimateImages: [],
+      text: "断路器",
     },
     {
-      "anchors": [
+      anchors: [
         {
-          "id": "0",
-          "penId": "365c8da",
-          "x": 0.5,
-          "y": 0
+          id: "0",
+          penId: "365c8da",
+          x: 0.5,
+          y: 0,
         },
         {
-          "id": "1",
-          "penId": "365c8da",
-          "x": 1,
-          "y": 0.5
+          id: "1",
+          penId: "365c8da",
+          x: 1,
+          y: 0.5,
         },
         {
-          "id": "2",
-          "penId": "365c8da",
-          "x": 0.5,
-          "y": 1
+          id: "2",
+          penId: "365c8da",
+          x: 0.5,
+          y: 1,
         },
         {
-          "id": "3",
-          "penId": "365c8da",
-          "x": 0,
-          "y": 0.5
-        }
+          id: "3",
+          penId: "365c8da",
+          x: 0,
+          y: 0.5,
+        },
       ],
-      "center": {
-        "x": 473.95238095238085,
-        "y": 198.92380952380952
+      center: {
+        x: 473.95238095238085,
+        y: 198.92380952380952,
       },
-      "children": [],
-      "color": "rgba(48, 238, 111, 1)",
-      "disableAnchor": true,
-      "ex": 1.0000000000000002,
-      "ey": 1.0000000000000002,
-      "fontSize": 12,
-      "height": 1.0000000000000002,
-      "icon": "",
-      "iconFamily": "sgcc",
-      "id": "365c8da",
-      "lineHeight": 1.5,
-      "lineWidth": 1,
-      "locked": 0,
-      "name": "image",
-      "parentId": "55bef82a",
-      "rotate": 0,
-      "visible": true,
-      "width": 1.0000000000000002,
-      "x": 0,
-      "y": 0,
-      "originId": "2f898e8",
-      "lineAnimateImages": []
+      children: [],
+      color: "rgba(48, 238, 111, 1)",
+      disableAnchor: true,
+      ex: 1.0000000000000002,
+      ey: 1.0000000000000002,
+      fontSize: 12,
+      height: 1.0000000000000002,
+      icon: "",
+      iconFamily: "sgcc",
+      id: "365c8da",
+      lineHeight: 1.5,
+      lineWidth: 1,
+      locked: 0,
+      name: "image",
+      parentId: "55bef82a",
+      rotate: 0,
+      visible: true,
+      width: 1.0000000000000002,
+      x: 0,
+      y: 0,
+      originId: "2f898e8",
+      lineAnimateImages: [],
     },
     {
-      "anchors": [
+      anchors: [
         {
-          "id": "0",
-          "penId": "b059964",
-          "x": 0.5,
-          "y": 0
+          id: "0",
+          penId: "b059964",
+          x: 0.5,
+          y: 0,
         },
         {
-          "id": "1",
-          "penId": "b059964",
-          "x": 1,
-          "y": 0.5
+          id: "1",
+          penId: "b059964",
+          x: 1,
+          y: 0.5,
         },
         {
-          "id": "2",
-          "penId": "b059964",
-          "x": 0.5,
-          "y": 1
+          id: "2",
+          penId: "b059964",
+          x: 0.5,
+          y: 1,
         },
         {
-          "id": "3",
-          "penId": "b059964",
-          "x": 0,
-          "y": 0.5
-        }
+          id: "3",
+          penId: "b059964",
+          x: 0,
+          y: 0.5,
+        },
       ],
-      "center": {
-        "x": 473.95238095238085,
-        "y": 198.92380952380952
+      center: {
+        x: 473.95238095238085,
+        y: 198.92380952380952,
       },
-      "children": [],
-      "color": "rgba(255, 89, 89, 1)",
-      "disableAnchor": true,
-      "ex": 1.0000000000000002,
-      "ey": 1.0000000000000002,
-      "fontSize": 12,
-      "height": 1.0000000000000002,
-      "icon": "",
-      "iconFamily": "sgcc",
-      "id": "b059964",
-      "lineHeight": 1.5,
-      "lineWidth": 1,
-      "locked": 0,
-      "name": "image",
-      "parentId": "55bef82a",
-      "rotate": 0,
-      "visible": true,
-      "width": 1.0000000000000002,
-      "x": 0,
-      "y": 0,
-      "originId": "5f986060",
-      "lineAnimateImages": []
-    }
-  ]
+      children: [],
+      color: "rgba(255, 89, 89, 1)",
+      disableAnchor: true,
+      ex: 1.0000000000000002,
+      ey: 1.0000000000000002,
+      fontSize: 12,
+      height: 1.0000000000000002,
+      icon: "",
+      iconFamily: "sgcc",
+      id: "b059964",
+      lineHeight: 1.5,
+      lineWidth: 1,
+      locked: 0,
+      name: "image",
+      parentId: "55bef82a",
+      rotate: 0,
+      visible: true,
+      width: 1.0000000000000002,
+      x: 0,
+      y: 0,
+      originId: "5f986060",
+      lineAnimateImages: [],
+    },
+  ],
 };
 // 母线
 const busBar = {
@@ -592,7 +586,6 @@ const busBar = {
     text: "母线",
   },
 };
-
 
 const fuhekaiguan = {
   tag: "icon",
@@ -1206,26 +1199,27 @@ const fuhekaiguan = {
       ],
       rotate: 0,
       flag: "switch",
-      events:  [
+      events: [
         {
-          "where": {
-            "type": null
+          where: {
+            type: null,
           },
-          "name": "click",
-          "action": 5,
-          "value": "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
-          "fn": null
+          name: "click",
+          action: 5,
+          value:
+            "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          fn: null,
         },
         {
-          "where": {
-            "type": null
+          where: {
+            type: null,
           },
-          "name": "click",
-          "action": 6,
-          "value": "updateColor",
-          "fn": null
-        }
-      ]
+          name: "click",
+          action: 6,
+          value: "updateColor",
+          fn: null,
+        },
+      ],
     },
   ],
 };
@@ -1236,181 +1230,179 @@ const power = {
   type: "icon",
   data: [
     {
-      "width": 1,
-      "height": 1,
-      "name": "image",
-      "iconFamily": "sgcc",
-      "icon": "",
-      "id": "5d86a6a3",
-      "parentId": "976e94a",
-      "children": [],
-      "x": 0,
-      "y": 0,
-      "lineWidth": 1,
-      "fontSize": 12,
-      "lineHeight": 1.5,
-      "anchors": [
+      width: 1,
+      height: 1,
+      name: "image",
+      iconFamily: "sgcc",
+      icon: "",
+      id: "5d86a6a3",
+      parentId: "976e94a",
+      children: [],
+      x: 0,
+      y: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
         {
-          "x": 0.5,
-          "y": 0,
-          "id": "0",
-          "penId": "5d86a6a3"
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "5d86a6a3",
         },
         {
-          "x": 1,
-          "y": 0.5,
-          "id": "1",
-          "penId": "5d86a6a3"
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "5d86a6a3",
         },
         {
-          "x": 0.5,
-          "y": 1,
-          "id": "2",
-          "penId": "5d86a6a3"
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "5d86a6a3",
         },
         {
-          "x": 0,
-          "y": 0.5,
-          "id": "3",
-          "penId": "5d86a6a3"
-        }
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "5d86a6a3",
+        },
       ],
-      "lineAnimateImages": [],
-      "ex": 1,
-      "ey": 1,
-      "center": {
-        "x": 383.80000000000007,
-        "y": 237.20000000000002
+      lineAnimateImages: [],
+      ex: 1,
+      ey: 1,
+      center: {
+        x: 383.80000000000007,
+        y: 237.20000000000002,
       },
-      "color": "rgba(156, 156, 156, 1)",
-      "locked": 0,
-      "visible": true,
-      "disableAnchor": true
+      color: "rgba(156, 156, 156, 1)",
+      locked: 0,
+      visible: true,
+      disableAnchor: true,
     },
     {
-      "width": 1,
-      "height": 1,
-      "name": "image",
-      "iconFamily": "sgcc",
-      "icon": "",
-      "id": "4f43b6d",
-      "children": [],
-      "x": 0,
-      "y": 0,
-      "lineWidth": 1,
-      "fontSize": 12,
-      "lineHeight": 1.5,
-      "anchors": [
+      width: 1,
+      height: 1,
+      name: "image",
+      iconFamily: "sgcc",
+      icon: "",
+      id: "4f43b6d",
+      children: [],
+      x: 0,
+      y: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
         {
-          "x": 0.5,
-          "y": 0,
-          "id": "0",
-          "penId": "4f43b6d"
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "4f43b6d",
         },
         {
-          "x": 1,
-          "y": 0.5,
-          "id": "1",
-          "penId": "4f43b6d"
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "4f43b6d",
         },
         {
-          "x": 0.5,
-          "y": 1,
-          "id": "2",
-          "penId": "4f43b6d"
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "4f43b6d",
         },
         {
-          "x": 0,
-          "y": 0.5,
-          "id": "3",
-          "penId": "4f43b6d"
-        }
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "4f43b6d",
+        },
       ],
-      "lineAnimateImages": [],
-      "ex": 1,
-      "ey": 1,
-      "center": {
-        "x": 383.80000000000007,
-        "y": 237.20000000000002
+      lineAnimateImages: [],
+      ex: 1,
+      ey: 1,
+      center: {
+        x: 383.80000000000007,
+        y: 237.20000000000002,
       },
-      "parentId": "976e94a",
-      "rotate": 0,
-      "color": "rgba(255, 0, 0, 1)",
-      "locked": 0,
-      "visible": true,
-      "disableAnchor": true
+      parentId: "976e94a",
+      rotate: 0,
+      color: "rgba(255, 0, 0, 1)",
+      locked: 0,
+      visible: true,
+      disableAnchor: true,
     },
     {
-      "id": "976e94a",
-      "name": "combine",
-      "x": 419.5000000000001,
-      "y": 142.25000000000006,
-      "ex": 619.5000000000001,
-      "ey": 342.25000000000006,
-      "width": 200,
-      "height": 200,
-      "center": {
-        "x": 519.5000000000001,
-        "y": 242.25000000000006
+      id: "976e94a",
+      name: "combine",
+      x: 419.5000000000001,
+      y: 142.25000000000006,
+      ex: 619.5000000000001,
+      ey: 342.25000000000006,
+      width: 200,
+      height: 200,
+      center: {
+        x: 519.5000000000001,
+        y: 242.25000000000006,
       },
-      "children": [
-        "5d86a6a3",
-        "4f43b6d"
+      children: ["5d86a6a3", "4f43b6d"],
+      showChild: 0,
+      lineWidth: 1,
+      fontSize: 12,
+      lineHeight: 1.5,
+      anchors: [
+        {
+          x: 0.5,
+          y: 0,
+          id: "0",
+          penId: "976e94a",
+        },
+        {
+          x: 1,
+          y: 0.5,
+          id: "1",
+          penId: "976e94a",
+        },
+        {
+          x: 0.5,
+          y: 1,
+          id: "2",
+          penId: "976e94a",
+        },
+        {
+          x: 0,
+          y: 0.5,
+          id: "3",
+          penId: "976e94a",
+        },
       ],
-      "showChild": 0,
-      "lineWidth": 1,
-      "fontSize": 12,
-      "lineHeight": 1.5,
-      "anchors": [
+      rotate: 0,
+      lineAnimateImages: [],
+      events: [
         {
-          "x": 0.5,
-          "y": 0,
-          "id": "0",
-          "penId": "976e94a"
+          where: {
+            type: null,
+          },
+          name: "click",
+          action: 5,
+          value:
+            "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          fn: null,
         },
         {
-          "x": 1,
-          "y": 0.5,
-          "id": "1",
-          "penId": "976e94a"
+          where: {
+            type: null,
+          },
+          name: "click",
+          action: 6,
+          value: "updateColor",
+          fn: null,
         },
-        {
-          "x": 0.5,
-          "y": 1,
-          "id": "2",
-          "penId": "976e94a"
-        },
-        {
-          "x": 0,
-          "y": 0.5,
-          "id": "3",
-          "penId": "976e94a"
-        }
       ],
-      "rotate": 0,
-      "lineAnimateImages": [],
-      "events": [
-        {
-          "where": {
-            "type": null
-          },
-          "name": "click",
-          "action": 5,
-          "value": "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
-          "fn": null
-        },
-        {
-          "where": {
-            "type": null
-          },
-          "name": "click",
-          "action": 6,
-          "value": "updateColor",
-          "fn": null
-        }
-      ]
-    }
-  ]
+    },
+  ],
 };
 
 // 上一节点（朝上）
@@ -1427,7 +1419,7 @@ const prevNode = {
     path: "M16 28V6M8 20h16M4 28h24",
     lineWidth: 6, // 这里设置线宽
     text: "上一节点",
-  }
+  },
 };
 
 // 下一节点（朝下，旋转180°）
@@ -1444,7 +1436,7 @@ const nextNode = {
     path: "M16 28V6M8 20h16M4 28h24",
     lineWidth: 6, // 这里设置线宽
     text: "下一节点",
-  }
+  },
 };
 
 // 记录已用色相
@@ -1460,7 +1452,7 @@ function getRandomBrightColor(minDiff = 40) {
   let tryCount = 0;
   do {
     hue = Math.floor(Math.random() * 360);
-    isDistinct = usedHues.every(used => {
+    isDistinct = usedHues.every((used) => {
       const diff = Math.abs(hue - used);
       return Math.min(diff, 360 - diff) >= minDiff;
     });
@@ -1477,14 +1469,14 @@ function getRandomBrightColor(minDiff = 40) {
 function hslToHex(h, s, l) {
   s /= 100;
   l /= 100;
-  const k = n => (n + h / 30) % 12;
+  const k = (n) => (n + h / 30) % 12;
   const a = s * Math.min(l, 1 - l);
-  const f = n =>
+  const f = (n) =>
     l - a * Math.max(-1, Math.min(Math.min(k(n) - 3, 9 - k(n)), 1));
   return (
     "#" +
     [f(0), f(8), f(4)]
-      .map(x =>
+      .map((x) =>
         Math.round(x * 255)
           .toString(16)
           .padStart(2, "0")
@@ -1494,15 +1486,15 @@ function hslToHex(h, s, l) {
 }
 
 globalThis.updateColor = (pen, params) => {
-
   const hasStep = [];
- 
+
   // power节点：从 tags 包含 power 的节点开始
   const start = meta2d
     .data()
-    .pens.filter((n) => Array.isArray(n.tags) && n.tags.includes("power") && n.showChild == 1);
-
-
+    .pens.filter(
+      (n) =>
+        Array.isArray(n.tags) && n.tags.includes("power") && n.showChild == 1
+    );
 
   // 遍历 type=1 并初始化颜色
   meta2d.data().pens.forEach((pen) => {
@@ -1514,17 +1506,22 @@ globalThis.updateColor = (pen, params) => {
     }
   });
 
-
   const updateNode = (id, color, powerId) => {
-
     const node = meta2d.findOne(id);
     if (!node) return;
     //判断短路
-    if (Array.isArray(node?.tags) && node?.tags.includes("power") && node.id != powerId) {
-      alert("线路短路");
-    
-      meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })
-      updateColor()
+    if (
+      Array.isArray(node?.tags) &&
+      node?.tags.includes("power") &&
+      node.id != powerId
+    ) {
+      ElMessage({
+        message: "线路短路",
+        type: "error",
+      });
+
+      meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild });
+      updateColor();
       return;
     }
 
@@ -1547,7 +1544,7 @@ globalThis.updateColor = (pen, params) => {
         if (hasStep.includes(nid)) return;
         updateNode(nid, color, powerId);
       });
-    };
+    }
     // 如果是线 则继续遍历
     if (node?.type === 1) {
       node.anchors.forEach((n) => {
@@ -1559,7 +1556,6 @@ globalThis.updateColor = (pen, params) => {
   };
 
   start.forEach((node) => {
- 
     const color = getRandomBrightColor();
     updateNode(node.id, color, node.id);
   });
@@ -1567,10 +1563,19 @@ globalThis.updateColor = (pen, params) => {
   usedHues.length = 0;
 };
 
-
 export const customData = {
   loaded: true,
   name: "常用图元",
   show: true,
-  list: [power, busBar, fuhekaiguan, circuitBreakerSwitch, loadSwitch, didaoSwitch, user, prevNode, nextNode],
+  list: [
+    power,
+    busBar,
+    fuhekaiguan,
+    circuitBreakerSwitch,
+    loadSwitch,
+    didaoSwitch,
+    user,
+    prevNode,
+    nextNode,
+  ],
 };
