@@ -4,11 +4,11 @@ import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
 import Uploader from 'simple-uploader.js';
-import router  from "../router.js"
+ 
 
 import { ref } from "vue"
- 
- 
+  
+
 function getUserDir(path, extend = []) {
   return async () => {
     const { data: fileList } = await axios.get(path)
@@ -50,8 +50,8 @@ function formatDate(dateStr) {
 }
 
 
-export const lockStatus = ref()
- 
+export const lockStatus = ref();
+export  const updateData = ref(0)
  
 
 export const currentSelect = ref()
@@ -411,6 +411,8 @@ const menuFunc = {
         const blob = new Blob([content], { type: 'application/json' });
         const file = new File([blob], path.split('/').pop(), { type: 'application/json' });
         
+        updateData.value++
+ 
         const res = await uploadFileToServer(file, path);
         resolve(res);
       } catch (err) {

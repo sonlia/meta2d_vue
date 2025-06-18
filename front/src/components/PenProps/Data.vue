@@ -92,7 +92,7 @@
   }
   
   function updatePenTags() {
-    debugger
+ 
     if (window.meta2d && activePen.target) {
       if (multiPen.value) {
         for (let pen of activePen.target) {

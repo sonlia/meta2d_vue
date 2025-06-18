@@ -1,68 +1,21 @@
-import {parseSvg} from "@meta2d/svg";
-const bianyaqi = {
-  tag: "icon",
-  name: "变压器",
-  icon: "sgcc sgcc-shuangraozubianyaqiYdzhongxingdianyinchuxingxing-sanjiaoxinglianjie",
-  type: "icon",
-  data: {
-    width: 219.99999999999983,
-    height: 219.99999999999983,
-    name: "image",
-    iconFamily: "sgcc",
-    icon: "",
-    id: "1a412a52",
-    children: [],
-    x: 309.0000000000001,
-    y: 119.00000000000009,
-    lineWidth: 1,
-    fontSize: 12,
-    lineHeight: 1.5,
-    anchors: [
-      {
-        x: 0.5,
-        y: 0,
-        id: "0",
-        penId: "1a412a52",
-      },
-      {
-        x: 1,
-        y: 0.5,
-        id: "1",
-        penId: "1a412a52",
-      },
-      {
-        x: 0.5,
-        y: 1,
-        id: "2",
-        penId: "1a412a52",
-      },
-      {
-        x: 0,
-        y: 0.5,
-        id: "3",
-        penId: "1a412a52",
-      },
-    ],
-    rotate: 0,
-    text:"变压器"
-  },
-};
+import { parseSvg } from "@meta2d/svg";
+
 
 const user = {
   tag: "icon",
   name: "用户",
- 
+
   svg: `<svg t="用户图标" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1001" width="25" height="25"><path d="M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z" stroke="#333"  fill="none"  stroke-width="40" /></svg>`,
 
-  data:{
+  data: {
     name: "svgPath",
     x: 100,
     y: 100,
     width: 100,
     height: 100,
- text:"用户",
+    text: "用户",
     path: "M512 512c106.039 0 192-85.961 192-192S618.039 128 512 128 320 213.961 320 320s85.961 192 192 192z m0 64c-141.385 0-384 71.885-384 192v64h768v-64c0-120.115-242.615-192-384-192z"
-,
+    ,
   },
 };
 const didaoSwitch = {
@@ -82,7 +35,7 @@ const didaoSwitch = {
       children: [],
       x: 0,
       y: 0,
-      text:"地刀",
+      text: "地刀",
       lineWidth: 1,
       fontSize: 12,
       lineHeight: 1.5,
@@ -223,7 +176,7 @@ const didaoSwitch = {
           name: "click",
           action: 6,
           // params: "我是参数",//传到代码块的参数
-          value: "updateSwitchNode", //全局函数名
+          value: "updateColor", //全局函数名
         },
       ],
     },
@@ -252,7 +205,7 @@ const circuitBreakerSwitch = {
       lineWidth: 1,
       fontSize: 12,
       lineHeight: 1.5,
-      text:"隔离开关",
+      text: "隔离开关",
       anchors: [
         {
           x: 0.5,
@@ -751,7 +704,7 @@ const circuitBreakerSwitch = {
           name: "click",
           action: 6,
           // params: "我是参数",//传到代码块的参数
-          value: "updateSwitchNode", //全局函数名
+          value: "updateColor", //全局函数名
         },
       ],
     },
@@ -763,181 +716,181 @@ const loadSwitch = {
   name: "断路器",
   icon: "sgcc sgcc-a-shouchekaiguanguan--_huaban1",
   type: "icon",
-  text:"断路器  ",
+  text: "断路器  ",
   data: [
     {
-        "anchors": [
-            {
-                "id": "0",
-                "penId": "55bef82a",
-                "x": 0.5,
-                "y": 0
-            },
-            {
-                "id": "1",
-                "penId": "55bef82a",
-                "x": 1,
-                "y": 0.5
-            },
-            {
-                "id": "2",
-                "penId": "55bef82a",
-                "x": 0.5,
-                "y": 1
-            },
-            {
-                "id": "3",
-                "penId": "55bef82a",
-                "x": 0,
-                "y": 0.5
-            }
-        ],
-        "center": {
-            "x": 228.5999999999999,
-            "y": 442.14285714285717
+      "anchors": [
+        {
+          "id": "0",
+          "penId": "55bef82a",
+          "x": 0.5,
+          "y": 0
         },
-        "children": [
-            "365c8da",
-            "b059964"
-        ],
-        
-        "events": [
-            {
-                "action": 5,
-                "name": "click",
-                "value": "console.log(  context.meta2d.data())\r\nconst node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })\r\n\r\n",
-                "where": {
-                    "type": null
-                }
-            }
-        ],
-        "ex": 288.5999999999999,
-        "ey": 502.1428571428572,
-        "fontSize": 12,
-        "height": 120.00000000000003,
-        "id": "55bef82a",
-        "lineHeight": 1.5,
-        "lineWidth": 1,
-        "name": "combine",
-        "rotate": 0,
-        "showChild": 0,
-        "width": 120.00000000000003,
-        "x": 168.5999999999999,
-        "y": 382.14285714285717,
-        "componentId": "01948d77-0662-700a-9b80-340bc2fe4a9e",
-        "originId": "168de522",
-        "lineAnimateImages": [],
-        "text": "断路器"
+        {
+          "id": "1",
+          "penId": "55bef82a",
+          "x": 1,
+          "y": 0.5
+        },
+        {
+          "id": "2",
+          "penId": "55bef82a",
+          "x": 0.5,
+          "y": 1
+        },
+        {
+          "id": "3",
+          "penId": "55bef82a",
+          "x": 0,
+          "y": 0.5
+        }
+      ],
+      "center": {
+        "x": 228.5999999999999,
+        "y": 442.14285714285717
+      },
+      "children": [
+        "365c8da",
+        "b059964"
+      ],
+
+      "events": [
+        {
+          "action": 5,
+          "name": "click",
+          "value": "console.log(  context.meta2d.data())\r\nconst node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })\r\n\r\n",
+          "where": {
+            "type": null
+          }
+        }
+      ],
+      "ex": 288.5999999999999,
+      "ey": 502.1428571428572,
+      "fontSize": 12,
+      "height": 120.00000000000003,
+      "id": "55bef82a",
+      "lineHeight": 1.5,
+      "lineWidth": 1,
+      "name": "combine",
+      "rotate": 0,
+      "showChild": 0,
+      "width": 120.00000000000003,
+      "x": 168.5999999999999,
+      "y": 382.14285714285717,
+      "componentId": "01948d77-0662-700a-9b80-340bc2fe4a9e",
+      "originId": "168de522",
+      "lineAnimateImages": [],
+      "text": "断路器"
     },
     {
-        "anchors": [
-            {
-                "id": "0",
-                "penId": "365c8da",
-                "x": 0.5,
-                "y": 0
-            },
-            {
-                "id": "1",
-                "penId": "365c8da",
-                "x": 1,
-                "y": 0.5
-            },
-            {
-                "id": "2",
-                "penId": "365c8da",
-                "x": 0.5,
-                "y": 1
-            },
-            {
-                "id": "3",
-                "penId": "365c8da",
-                "x": 0,
-                "y": 0.5
-            }
-        ],
-        "center": {
-            "x": 473.95238095238085,
-            "y": 198.92380952380952
+      "anchors": [
+        {
+          "id": "0",
+          "penId": "365c8da",
+          "x": 0.5,
+          "y": 0
         },
-        "children": [],
-        "color": "rgba(48, 238, 111, 1)",
-        "disableAnchor": true,
-        "ex": 1.0000000000000002,
-        "ey": 1.0000000000000002,
-        "fontSize": 12,
-        "height": 1.0000000000000002,
-        "icon": "",
-        "iconFamily": "sgcc",
-        "id": "365c8da",
-        "lineHeight": 1.5,
-        "lineWidth": 1,
-        "locked": 0,
-        "name": "image",
-        "parentId": "55bef82a",
-        "rotate": 0,
-        "visible": true,
-        "width": 1.0000000000000002,
-        "x": 0,
-        "y": 0,
-        "originId": "2f898e8",
-        "lineAnimateImages": []
+        {
+          "id": "1",
+          "penId": "365c8da",
+          "x": 1,
+          "y": 0.5
+        },
+        {
+          "id": "2",
+          "penId": "365c8da",
+          "x": 0.5,
+          "y": 1
+        },
+        {
+          "id": "3",
+          "penId": "365c8da",
+          "x": 0,
+          "y": 0.5
+        }
+      ],
+      "center": {
+        "x": 473.95238095238085,
+        "y": 198.92380952380952
+      },
+      "children": [],
+      "color": "rgba(48, 238, 111, 1)",
+      "disableAnchor": true,
+      "ex": 1.0000000000000002,
+      "ey": 1.0000000000000002,
+      "fontSize": 12,
+      "height": 1.0000000000000002,
+      "icon": "",
+      "iconFamily": "sgcc",
+      "id": "365c8da",
+      "lineHeight": 1.5,
+      "lineWidth": 1,
+      "locked": 0,
+      "name": "image",
+      "parentId": "55bef82a",
+      "rotate": 0,
+      "visible": true,
+      "width": 1.0000000000000002,
+      "x": 0,
+      "y": 0,
+      "originId": "2f898e8",
+      "lineAnimateImages": []
     },
     {
-        "anchors": [
-            {
-                "id": "0",
-                "penId": "b059964",
-                "x": 0.5,
-                "y": 0
-            },
-            {
-                "id": "1",
-                "penId": "b059964",
-                "x": 1,
-                "y": 0.5
-            },
-            {
-                "id": "2",
-                "penId": "b059964",
-                "x": 0.5,
-                "y": 1
-            },
-            {
-                "id": "3",
-                "penId": "b059964",
-                "x": 0,
-                "y": 0.5
-            }
-        ],
-        "center": {
-            "x": 473.95238095238085,
-            "y": 198.92380952380952
+      "anchors": [
+        {
+          "id": "0",
+          "penId": "b059964",
+          "x": 0.5,
+          "y": 0
         },
-        "children": [],
-        "color": "rgba(255, 89, 89, 1)",
-        "disableAnchor": true,
-        "ex": 1.0000000000000002,
-        "ey": 1.0000000000000002,
-        "fontSize": 12,
-        "height": 1.0000000000000002,
-        "icon": "",
-        "iconFamily": "sgcc",
-        "id": "b059964",
-        "lineHeight": 1.5,
-        "lineWidth": 1,
-        "locked": 0,
-        "name": "image",
-        "parentId": "55bef82a",
-        "rotate": 0,
-        "visible": true,
-        "width": 1.0000000000000002,
-        "x": 0,
-        "y": 0,
-        "originId": "5f986060",
-        "lineAnimateImages": []
+        {
+          "id": "1",
+          "penId": "b059964",
+          "x": 1,
+          "y": 0.5
+        },
+        {
+          "id": "2",
+          "penId": "b059964",
+          "x": 0.5,
+          "y": 1
+        },
+        {
+          "id": "3",
+          "penId": "b059964",
+          "x": 0,
+          "y": 0.5
+        }
+      ],
+      "center": {
+        "x": 473.95238095238085,
+        "y": 198.92380952380952
+      },
+      "children": [],
+      "color": "rgba(255, 89, 89, 1)",
+      "disableAnchor": true,
+      "ex": 1.0000000000000002,
+      "ey": 1.0000000000000002,
+      "fontSize": 12,
+      "height": 1.0000000000000002,
+      "icon": "",
+      "iconFamily": "sgcc",
+      "id": "b059964",
+      "lineHeight": 1.5,
+      "lineWidth": 1,
+      "locked": 0,
+      "name": "image",
+      "parentId": "55bef82a",
+      "rotate": 0,
+      "visible": true,
+      "width": 1.0000000000000002,
+      "x": 0,
+      "y": 0,
+      "originId": "5f986060",
+      "lineAnimateImages": []
     }
-]
+  ]
 };
 // 母线
 const busBar = {
@@ -945,7 +898,7 @@ const busBar = {
   tag: "aa",
   name: "母线",
   icon: "l-line",
- 
+
   data: {
     anchors: [
       {
@@ -965,11 +918,11 @@ const busBar = {
     name: "rectangle",
     lineWidth: 0,
     background: "#222222",
-    text:"母线",
+    text: "母线",
   },
 };
 
- 
+
 const fuhekaiguan = {
   tag: "icon",
   name: "负荷开关",
@@ -983,7 +936,7 @@ const fuhekaiguan = {
       y: 0,
       ex: 0.9999999999999996,
       ey: 1,
-      text:"负荷开关",
+      text: "负荷开关",
       width: 0.9999999999999996,
       height: 1,
       center: {
@@ -1589,7 +1542,7 @@ const fuhekaiguan = {
           },
           name: "click",
           action: 6,
-          value: "updateSwitchNode",
+          value: "updateColor",
           fn: null,
         },
       ],
@@ -1601,24 +1554,183 @@ const power = {
   name: "电源",
   icon: "sgcc sgcc-fadianji",
   type: "icon",
-  data: {
-    width: 100,
-    height: 100,
-    flag: "power",
-    isOn: 1,
-    name: "icon",
-    iconFamily: "sgcc",
-    icon: "",
-    text:"电源",
-    events: [
-      {
-        name: "click",
-        action: 6,
-        // params: "我是参数",//传到代码块的参数
-        value: "powerUpdate", //全局函数名
+  data: [
+    {
+      "width": 1,
+      "height": 1,
+      "name": "image",
+      "iconFamily": "sgcc",
+      "icon": "",
+      "id": "5d86a6a3",
+      "parentId": "976e94a",
+      "children": [],
+      "x": 0,
+      "y": 0,
+      "lineWidth": 1,
+      "fontSize": 12,
+      "lineHeight": 1.5,
+      "anchors": [
+        {
+          "x": 0.5,
+          "y": 0,
+          "id": "0",
+          "penId": "5d86a6a3"
+        },
+        {
+          "x": 1,
+          "y": 0.5,
+          "id": "1",
+          "penId": "5d86a6a3"
+        },
+        {
+          "x": 0.5,
+          "y": 1,
+          "id": "2",
+          "penId": "5d86a6a3"
+        },
+        {
+          "x": 0,
+          "y": 0.5,
+          "id": "3",
+          "penId": "5d86a6a3"
+        }
+      ],
+      "lineAnimateImages": [],
+      "ex": 1,
+      "ey": 1,
+      "center": {
+        "x": 383.80000000000007,
+        "y": 237.20000000000002
       },
-    ],
-  },
+      "color": "rgba(156, 156, 156, 1)",
+      "locked": 0,
+      "visible": true,
+      "disableAnchor": true
+    },
+    {
+      "width": 1,
+      "height": 1,
+      "name": "image",
+      "iconFamily": "sgcc",
+      "icon": "",
+      "id": "4f43b6d",
+      "children": [],
+      "x": 0,
+      "y": 0,
+      "lineWidth": 1,
+      "fontSize": 12,
+      "lineHeight": 1.5,
+      "anchors": [
+        {
+          "x": 0.5,
+          "y": 0,
+          "id": "0",
+          "penId": "4f43b6d"
+        },
+        {
+          "x": 1,
+          "y": 0.5,
+          "id": "1",
+          "penId": "4f43b6d"
+        },
+        {
+          "x": 0.5,
+          "y": 1,
+          "id": "2",
+          "penId": "4f43b6d"
+        },
+        {
+          "x": 0,
+          "y": 0.5,
+          "id": "3",
+          "penId": "4f43b6d"
+        }
+      ],
+      "lineAnimateImages": [],
+      "ex": 1,
+      "ey": 1,
+      "center": {
+        "x": 383.80000000000007,
+        "y": 237.20000000000002
+      },
+      "parentId": "976e94a",
+      "rotate": 0,
+      "color": "rgba(255, 0, 0, 1)",
+      "locked": 0,
+      "visible": true,
+      "disableAnchor": true
+    },
+    {
+      "id": "976e94a",
+      "name": "combine",
+      "x": 419.5000000000001,
+      "y": 142.25000000000006,
+      "ex": 619.5000000000001,
+      "ey": 342.25000000000006,
+      "width": 200,
+      "height": 200,
+      "center": {
+        "x": 519.5000000000001,
+        "y": 242.25000000000006
+      },
+      "children": [
+        "5d86a6a3",
+        "4f43b6d"
+      ],
+      "showChild": 0,
+      "lineWidth": 1,
+      "fontSize": 12,
+      "lineHeight": 1.5,
+      "anchors": [
+        {
+          "x": 0.5,
+          "y": 0,
+          "id": "0",
+          "penId": "976e94a"
+        },
+        {
+          "x": 1,
+          "y": 0.5,
+          "id": "1",
+          "penId": "976e94a"
+        },
+        {
+          "x": 0.5,
+          "y": 1,
+          "id": "2",
+          "penId": "976e94a"
+        },
+        {
+          "x": 0,
+          "y": 0.5,
+          "id": "3",
+          "penId": "976e94a"
+        }
+      ],
+      "rotate": 0,
+      "lineAnimateImages": [],
+      "events": [
+        {
+          "where": {
+            "type": null
+          },
+          "name": "click",
+          "action": 5,
+          "value": "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          "fn": null
+        },
+        {
+          "where": {
+            "type": null
+          },
+          "name": "click",
+          "action": 6,
+          "value": "updateColor",
+          "fn": null
+        }
+      ]
+    }
+  ]
 };
 
 // 上一节点（朝上）
@@ -1634,7 +1746,7 @@ const prevNode = {
     height: 100,
     path: "M16 28V6M8 20h16M4 28h24",
     lineWidth: 6, // 这里设置线宽
-    text:"上一节点",
+    text: "上一节点",
   }
 };
 
@@ -1651,172 +1763,134 @@ const nextNode = {
     height: 100,
     path: "M16 28V6M8 20h16M4 28h24",
     lineWidth: 6, // 这里设置线宽
-    text:"下一节点",
+    text: "下一节点",
   }
 };
 
-function getRandomBrightColor() {
-    // 定义亮度范围
-    const highBrightness = { min: 200, max: 255 };
-    const lowBrightness = { min: 90, max: 182 }; // 调整下限以确保颜色鲜艳
-  
-    function getRandomBetween(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-  
-    function componentToHex(c) {
-      return c.toString(16).padStart(2, "0");
-    }
-  
-    // 随机选择一个颜色分量作为高亮度值
-    const position = Math.floor(Math.random() * 3);
-    const components = [0, 0, 0];
-  
-    for (let i = 0; i < 3; i++) {
-      if (i === position) {
-        // 设置选定位置的颜色为高亮度
-        components[i] = getRandomBetween(highBrightness.min, highBrightness.max);
-      } else {
-        // 其余两个颜色分量设置为低亮度，但足够深以形成对比
-        components[i] = getRandomBetween(lowBrightness.min, lowBrightness.max);
-      }
-    }
-  
-    return "#" + components.map(componentToHex).join("");
-  }
-  const updateColor = (pen, params) => {
-    const blacklist = ["switch", "text"];
-    // power节点
-    const start = meta2d
-      .data()
-      .pens.filter((n) => n.flag == "power" && n.isOn === 1);
-    //获取 所有非 开关节点的所有节点
-    const allId = new Set();
-    const alloutId = new Set();
-    // 遍历当前节点 并初始化颜色
-    meta2d.data().pens.forEach((node) => {
-      if (node && node.id !== undefined) {
-        // 确保 node 和 node.id 存在
-        allId.add(node.id); // 添加节点 ID 到 allId 集合
-      }
-  
-      (node?.children ?? []).forEach((x) => alloutId.add(x));
+// 记录已用色相
+const usedHues = [];
+
+/**
+ * 生成高对比度且不相似的随机颜色
+ * @param {number} minDiff 色相最小间隔（建议30-40）
+ * @returns {string} 颜色字符串（如 #ff00ff）
+ */
+function getRandomBrightColor(minDiff = 40) {
+  let hue, isDistinct;
+  let tryCount = 0;
+  do {
+    hue = Math.floor(Math.random() * 360);
+    isDistinct = usedHues.every(used => {
+      const diff = Math.abs(hue - used);
+      return Math.min(diff, 360 - diff) >= minDiff;
     });
-    const allNodeId = [...allId]
-      .filter((id) => ![...alloutId].includes(id))
-      .filter((id) => {
-        const node = meta2d.findOne(id);
-        return !blacklist.includes(node.flag);
+    tryCount++;
+    if (tryCount > 100) break;
+  } while (!isDistinct);
+
+  usedHues.push(hue);
+  // 高饱和度90%、亮度60%，保证无灰无黑
+  return hslToHex(hue, 90, 60);
+}
+
+// HSL转HEX
+function hslToHex(h, s, l) {
+  s /= 100;
+  l /= 100;
+  const k = n => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = n =>
+    l - a * Math.max(-1, Math.min(Math.min(k(n) - 3, 9 - k(n)), 1));
+  return (
+    "#" +
+    [f(0), f(8), f(4)]
+      .map(x =>
+        Math.round(x * 255)
+          .toString(16)
+          .padStart(2, "0")
+      )
+      .join("")
+  );
+}
+
+globalThis.updateColor = (pen, params) => {
+
+  const hasStep = [];
+ 
+  // power节点：从 tags 包含 power 的节点开始
+  const start = meta2d
+    .data()
+    .pens.filter((n) => Array.isArray(n.tags) && n.tags.includes("power") && n.showChild == 1);
+
+
+
+  // 遍历 type=1 并初始化颜色
+  meta2d.data().pens.forEach((pen) => {
+    if (pen.type === 1) {
+      meta2d.setValue({
+        id: pen.id,
+        color: "#666666", // 设置默认颜色为灰色
       });
-    allNodeId.forEach((id) => {
-      if (meta2d.findOne(id).flag == "busBar") {
-        meta2d.setValue({ id: id, background: "rgba(115,115,115,255)" });
-      } else {
-        meta2d.setValue({ id: id, color: "rgba(115,115,115,255)" });
-      }
-    });
-  
-    let hasStep = [];
-    // 记录是否短路。
-    let circuitNode;
-    const updateNode = (id, color, powerId) => {
-      const node = meta2d.findOne(id);
-      if (!node) return;
-      if (node?.flag == "power" && node.id != powerId && node.isOn == 1) {
-        circuitNode = "";
-        console.log("....", node.flag, node.id, powerId);
-        alert("线路短路");
-        circuitNode = node;
-        return;
-      }
-      //   组元 有 busBar  text   power loadSwitch circuitBreaker 且 不处理开关
-  
-      if (node?.flag == "busBar") {
-        meta2d.setValue({
-          id: node.id,
-          background: color,
-        });
-      }
-      if (node?.flag == "power" && node.isOn === 1) {
-        meta2d.setValue({
-          id: node.id,
-          color: color,
-        });
-      }
-      if (node?.type == 1) {
-        meta2d.setValue({
-          id: node.id,
-          color: color,
-        });
-      }
-  
-      // 如果开关  断开 则不继续遍历
-      if (node?.flag === "switch") {
-        if (node.showChild == 0) {
-          return;
-        }
-      }
-      // 记录已经 计算过的id
-      hasStep.push(id);
-      // 当是节点
-      if (node.hasOwnProperty("connectedLines")) {
-        node.connectedLines.forEach((n) => {
-          const nid = n.lineId;
-          if (hasStep.includes(nid)) return;
-          updateNode(nid, color, powerId);
-        });
-      } else {
-        node.anchors.forEach((n) => {
-          const nid = n.connectTo;
-          if (hasStep.includes(nid)) return;
-          updateNode(nid, color, powerId);
-        });
-      }
+    }
+  });
+
+
+  const updateNode = (id, color, powerId) => {
+
+    const node = meta2d.findOne(id);
+    if (!node) return;
+    //判断短路
+    if (Array.isArray(node?.tags) && node?.tags.includes("power") && node.id != powerId) {
+      alert("线路短路");
+    
+      meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })
+      updateColor()
+      return;
+    }
+
+    if (node?.type == 1) {
+      meta2d.setValue({
+        id: node.id,
+        color: color,
+      });
+    }
+
+    // showChild 为 0 时表示断开，忽略，不继续遍历
+    if (node?.showChild === 0) {
+      return;
+    }
+    hasStep.push(id);
+    // 有连接节点的遍历
+    if (node.hasOwnProperty("connectedLines")) {
+      node.connectedLines.forEach((n) => {
+        const nid = n.lineId;
+        if (hasStep.includes(nid)) return;
+        updateNode(nid, color, powerId);
+      });
     };
-  
-    start.forEach((node) => {
-      const color = getRandomBrightColor();
-      updateNode(node.id, color, node.id);
-    });
-    return circuitNode;
-  };
-  globalThis.updateSwitchNode = (pen, params) => {
-    meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild });
-    const circuitNode = updateColor(pen, params);
-  
-    if (circuitNode) {
-      meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild });
+    // 如果是线 则继续遍历
+    if (node?.type === 1) {
+      node.anchors.forEach((n) => {
+        const nid = n.connectTo;
+        if (hasStep.includes(nid)) return;
+        updateNode(nid, color, powerId);
+      });
     }
-    updateColor(pen, params);
   };
-  globalThis.powerUpdate = (pen, params) => {
-    const cacheColor = pen.color;
-  
-    if (pen.isOn) {
-      // 如果是1
-      meta2d.setValue({ id: pen.id, color: "rgba(115,115,115,255)", isOn: 0 });
-    } else {
-      // 0 的情况
-      meta2d.setValue({ id: pen.id, isOn: 1 });
-    }
-    const circuitNode = updateColor(pen, params);
-  
-    if (circuitNode) {
-      if (pen.isOn) {
-        // 如果是1
-        meta2d.setValue({ id: pen.id, color: "rgba(115,115,115,255)", isOn: 0 });
-      } else {
-        // 0 的情况
-        meta2d.setValue({ id: pen.id, isOn: 1, color: cacheColor });
-      }
-    }
-    updateColor(pen, params);
-  };
+
+  start.forEach((node) => {
+ 
+    const color = getRandomBrightColor();
+    updateNode(node.id, color, node.id);
+  });
+  // 颜色分配完后清空色相池，保证下次重新分配时颜色依然分散
+  usedHues.length = 0;
+};
 
 
 export const customData = {
   loaded: true,
   name: "常用图元",
   show: true,
-  list: [power, busBar, fuhekaiguan, circuitBreakerSwitch, loadSwitch, didaoSwitch, bianyaqi, user, prevNode, nextNode],
+  list: [power, busBar, fuhekaiguan, circuitBreakerSwitch, loadSwitch, didaoSwitch, user, prevNode, nextNode],
 };

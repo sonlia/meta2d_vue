@@ -30,7 +30,7 @@
 
 <script setup>
 import { computed, ref, watch } from "vue";
-import { currentSelect, getSwitchHistory } from "../data/defaultsConfig.js";
+import { currentSelect, getSwitchHistory,updateData } from "../data/defaultsConfig.js";
 
 const switchChangHistory = ref([]);
 
@@ -45,8 +45,11 @@ async function fetchHistory() {
 }
 
 // 监听 currentSelect 变化自动请求
-watch(currentSelect, () => {
+watch([currentSelect,updateData], () => {
+  console.log("updateData",updateData.value);
+ setTimeout(() => {
   fetchHistory();
+ }, 1000);
 }, { immediate: true });
 
 // 监听 meta2d.store.data.locked，locked!=0时延迟500ms重试
