@@ -6,7 +6,7 @@ import {
   svgToPens,
 } from "../data/icons.js";
 import { Search } from "@element-plus/icons-vue";
-import projecMange from "./projecMange.vue";
+import projectMange from "./projectMange.vue";
 import { Meta2d } from "@meta2d/core";
 import { computed, onMounted, reactive, ref, watch, nextTick, toRaw } from "vue";
 import axios from "axios";
@@ -234,7 +234,7 @@ const setHover = (item, val) => { item._hover = val }
 <template>
   <el-tabs v-model="activeName" class="icons" @tab-click="handleClick">
     <el-tab-pane label="工程列表" name="filelist">
-      <projecMange @node-click="getCurrentSelect" />
+      <projectMange @node-click="getCurrentSelect" />
     </el-tab-pane>
 
     <el-tab-pane label="图元列表" class="tablist" name="iconlist">
