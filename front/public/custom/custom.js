@@ -577,13 +577,15 @@ const busBar = {
         id: "1",
       },
     ],
-    flag: "busBar",
+ 
     width: 200,
     height: 5,
     name: "rectangle",
-    lineWidth: 0,
+    lineWidth: 2,
     background: "#222222",
     text: "母线",
+    flag:"busBar",
+    
   },
 };
 
@@ -1198,7 +1200,7 @@ const fuhekaiguan = {
         },
       ],
       rotate: 0,
-      flag: "switch",
+   
       events: [
         {
           where: {
@@ -1439,7 +1441,18 @@ const nextNode = {
     lineWidth: 6, // 这里设置线宽
     text: "下一节点",
  
-    goToOutPath:""
+    goToOutPath:"",
+    events:[
+      {
+          "where": {
+              "type": null
+          },
+          "name": "dblclick",
+          "action": 5,
+          "value": "globalThis.openFile(pen.goToOutPath)",
+          "fn": null
+      }
+  ]
   },
 };
 
@@ -1500,12 +1513,21 @@ globalThis.updateColor = (pen, params) => {
         Array.isArray(n.tags) && n.tags.includes("power") && n.showChild == 1
     );
 
-  // 遍历 type=1 并初始化颜色
+  // 遍历  并初始化颜色
   meta2d.data().pens.forEach((pen) => {
+    // 用于
     if (pen.type === 1) {
       meta2d.setValue({
         id: pen.id,
         color: "#666666", // 设置默认颜色为灰色
+      });
+    }
+
+
+    if (pen?.flag == "busBar") {
+      meta2d.setValue({
+        id: pen.id,
+        background: "#666666",
       });
     }
   });
@@ -1517,7 +1539,8 @@ globalThis.updateColor = (pen, params) => {
     if (
       Array.isArray(node?.tags) &&
       node?.tags.includes("power") &&
-      node.id != powerId
+      node.id != powerId&&
+      node?.showChild==1
     ) {
       ElMessage({
         message: "线路短路",
@@ -1535,7 +1558,14 @@ globalThis.updateColor = (pen, params) => {
         color: color,
       });
     }
+    if (node?.flag == "busBar") {
+      meta2d.setValue({
+        id: node.id,
+        background: color,
+      });
+    }
 
+ 
     // showChild 为 0 时表示断开，忽略，不继续遍历
     if (node?.showChild === 0) {
       return;
