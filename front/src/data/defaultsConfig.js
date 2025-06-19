@@ -36,6 +36,8 @@ export async function openFile(filePath) {
     alert(e.message || '打开错误.');
   }
 }
+globalThis.openFile = openFile
+
 function formatDate(dateStr) {
   const date = new Date(dateStr)
   const year = date.getFullYear() // 年
@@ -48,7 +50,7 @@ function formatDate(dateStr) {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
-
+ 
 
 export const lockStatus = ref();
 export  const updateData = ref(0)
@@ -750,7 +752,7 @@ export const eventType = [
   },
   {
     name: "双击",
-    event: "dbclick",
+    event: "dblclick",
   },
 ]
 

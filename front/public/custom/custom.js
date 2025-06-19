@@ -1419,6 +1419,8 @@ const prevNode = {
     path: "M16 28V6M8 20h16M4 28h24",
     lineWidth: 6, // 这里设置线宽
     text: "上一节点",
+ 
+    goToOutPath:""
   },
 };
 
@@ -1433,9 +1435,11 @@ const nextNode = {
     y: 100,
     width: 100,
     height: 100,
-    path: "M16 28V6M8 20h16M4 28h24",
+    path: "M16 4V26M24 12h-16M28 4h-24",
     lineWidth: 6, // 这里设置线宽
     text: "下一节点",
+ 
+    goToOutPath:""
   },
 };
 

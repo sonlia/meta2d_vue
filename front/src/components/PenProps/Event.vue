@@ -146,6 +146,7 @@ function onCancelJsEdit() {
 }
 
 function autoSave() {
+  debugger
   if (window.meta2d && activePen.id) {
     window.meta2d.setValue({ id: activePen.id, events: activePen.events });
   }
@@ -298,7 +299,7 @@ function onCancelWhereEdit() {
 }
 .event-item-delete {
   position: absolute;
-  bottom: 0px;
+  top: 0px;
  
   display: inline-block;
 }
