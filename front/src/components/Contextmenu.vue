@@ -1,6 +1,8 @@
 <script setup>
 import {computed, onMounted, reactive, ref, nextTick} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
+
+import {lockStatus} from "../data/defaultsConfig.js"
 let isPens = ref(false)
 let ctxMenu = ref()
 let activePens = ref([])
@@ -173,23 +175,66 @@ function clearCombine() {
   ctxMenu.value.blur();
 }
 
+function setBreakPoint(){
+  if(!isPens.value || activePens.value.length===0) return;
+  const target = activePens.value[0];
+  // 以中心为基准放大 1.3 倍
+  const scale = 1.3;
+  const newWidth = target.width * scale;
+  const newHeight = target.height * scale;
+  const newX = target.x - (newWidth - target.width) / 2;
+  const newY = target.y - (newHeight - target.height) / 2;
+
+  const bpPen = {
+    id:`bp-${Date.now()}`,
+    name:'square', // 使用方形描边
+    breakpoint:true,
+    x: newX,
+    y: newY,
+    width: newWidth,
+    height: newHeight,
+    lineWidth:3,
+    color:'#ff0000',
+    background:'',
+    locked:2,
+  };
+  meta2d.addPen(bpPen);
+ 
+  ctxMenu.value.blur();
+}
+
+function clearBreakPoint(){
+ 
+  if(!isPens.value || activePens.value.length===0) return;
+  const target = activePens.value[0];
+  if(target.hasOwnProperty('breakpoint')&&target.breakpoint===true){
+    meta2d.delete([target],true);
+  }
+  ctxMenu.value.blur();
+}
+
 </script>
 
 <template>
-  <div class="contextmenu" ref="ctxMenu" tabindex="-1" @blur="ctxMenuClose">
-    <div class="ctx_item" v-show="isPens" @click="changeCoverage('top')">置顶</div>
-    <div class="ctx_item" v-show="isPens" @click="changeCoverage('bottom')">置底</div>
-    <div class="ctx_item" v-show="isPens" @click="changeCoverage('up')">上一图层</div>
-    <div class="ctx_item" v-show="isPens" @click="changeCoverage('down')">下一图层</div>
-    <div class="ctx_item" @click="lock">锁定</div>
-    <div class="ctx_item" v-show="isPens" @click="copy">复制</div>
-    <div class="ctx_item" @click="paste">粘贴</div>
-    <div class="ctx_item" v-show="isPens && activePens.length > 1" @click="group">组合</div>
-    <div class="ctx_item" v-show="isGroup" @click="unGroup">取消组合</div>
-    <div class="ctx_item" v-show="isPens && activePens.length > 1" @click="combine">组合为状态</div>
-    <div class="ctx_item"  v-show="isAppendToCombineVisible" @click="appendToCombine">追加到组合</div>
-    <div class="ctx_item" v-show="isGroup" @click="clearCombine">递归取消组合</div>
+  <div class="contextmenu" ref="ctxMenu" tabindex="-1" @blur="ctxMenuClose" >
+ 
+    <div class="ctx_item" v-show="isPens&& lockStatus === 0" @click="changeCoverage('top')">置顶</div>
+    <div class="ctx_item" v-show="isPens&& lockStatus === 0" @click="changeCoverage('bottom')">置底</div>
+    <div class="ctx_item" v-show="isPens&& lockStatus === 0" @click="changeCoverage('up')">上一图层</div>
+    <div class="ctx_item" v-show="isPens&& lockStatus === 0" @click="changeCoverage('down')">下一图层</div>
+    <div class="ctx_item" v-show="lockStatus === 0" @click="lock">锁定</div>
+    <div class="ctx_item" v-show="isPens&& lockStatus === 0" @click="copy">复制</div>
+    <div class="ctx_item" v-show="lockStatus === 0" @click="paste">粘贴</div>
+    <div class="ctx_item" v-show="isPens && activePens.length > 1&& lockStatus === 0" @click="group">组合</div>
+    <div class="ctx_item" v-show="isGroup&& lockStatus === 0" @click="unGroup">取消组合</div>
+    <div class="ctx_item" v-show="isPens && activePens.length > 1&& lockStatus === 0" @click="combine">组合为状态</div>
+    <div class="ctx_item"  v-show="isAppendToCombineVisible&& lockStatus === 0" @click="appendToCombine">追加到组合</div>
+    <div class="ctx_item" v-show="isGroup&& lockStatus === 0" @click="clearCombine">递归取消组合</div>
+
+    <div class="ctx_item" v-show="isPens && lockStatus!==0" @click="setBreakPoint">设置断开点</div>
+    <div class="ctx_item" v-show="isPens && lockStatus!==0" @click="clearBreakPoint">清除断开点</div>
   </div>
+
 </template>
 
 <style scoped>

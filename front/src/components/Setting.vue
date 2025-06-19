@@ -7,8 +7,8 @@ import Event from "./PenProps/Event.vue";
 import Animate from "./PenProps/Animate.vue";
 import Data from "./PenProps/Data.vue";
 import { ElInput, ElButton, ElDialog, ElTree } from "element-plus";
- 
 import axios from "axios";
+import { lockStatus } from "../data/defaultsConfig.js";
 
 const props = defineProps(['activeType'])
 let activeName1 = ref('map')
@@ -169,7 +169,7 @@ TreeSelectDialog.emits = ['update:modelValue', 'select']
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="ty_props" v-show="activeData && activeData.hasOwnProperty('goToOutPath')">
+    <div class="ty_props" v-show="activeData && activeData.hasOwnProperty('goToOutPath') && lockStatus === 0">
           <!-- 存在 goToOutPath 属性时显示路径选择 -->
           <div   class="q-mb-md row items-center">
         <el-input
