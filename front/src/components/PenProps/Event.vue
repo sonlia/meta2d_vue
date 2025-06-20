@@ -146,7 +146,7 @@ function onCancelJsEdit() {
 }
 
 function autoSave() {
-  debugger
+   
   if (window.meta2d && activePen.id) {
     window.meta2d.setValue({ id: activePen.id, events: activePen.events });
   }

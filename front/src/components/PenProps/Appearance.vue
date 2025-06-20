@@ -14,6 +14,9 @@ let otherProps = reactive({ props: [] });
 // 新增：单独定义 showChildRef
 const showChildRef = ref(0);
 
+// 预览状态
+const preview = reactive({ clicked:false })
+
 // 监听 activePen.target.showChild 的变化，保持同步
 watch(
   () => activePen.target,
@@ -991,37 +994,55 @@ function sameSize() {
   // 参考第一个节点，宽高都相同
   meta2d.beSameByFirst(activePen.target);
 }
+
+// 预览状态
+function previewAlign(type){
+  preview.clicked=false
+  meta2d.alignNodes(type, activePen.target)
+}
+
+function leaveAlign(){
+  if(!preview.clicked){
+    meta2d.undo();
+  }
+}
+
+function clickAlign(type){
+  preview.clicked=true
+  // 已在预览时对齐，点击时可再次执行确保历史记录正确
+  meta2d.alignNodes(type, activePen.target)
+}
 </script>
 
 <template>
   <div>
     <div v-if="multiPen" class="align-toolbar-wrapper">
       <div class="align-toolbar">
-        <button @click="alignLeft" title="左对齐">
+        <button @mouseenter="previewAlign('left')" @mouseleave="leaveAlign" @click="clickAlign('left')" title="左对齐">
           <svg width="20" height="20"><rect x="2" y="4" width="3" height="12" fill="#333"/><rect x="7" y="6" width="11" height="8" fill="#bbb"/></svg>
         </button>
-        <button @click="alignRight" title="右对齐">
+        <button @mouseenter="previewAlign('right')" @mouseleave="leaveAlign" @click="clickAlign('right')" title="右对齐">
           <svg width="20" height="20"><rect x="15" y="4" width="3" height="12" fill="#333"/><rect x="2" y="6" width="11" height="8" fill="#bbb"/></svg>
         </button>
-        <button @click="alignTop" title="顶部对齐">
+        <button @mouseenter="previewAlign('top')" @mouseleave="leaveAlign" @click="clickAlign('top')" title="顶部对齐">
           <svg width="20" height="20"><rect x="4" y="2" width="12" height="3" fill="#333"/><rect x="6" y="7" width="8" height="11" fill="#bbb"/></svg>
         </button>
-        <button @click="alignBottom" title="底部对齐">
+        <button @mouseenter="previewAlign('bottom')" @mouseleave="leaveAlign" @click="clickAlign('bottom')" title="底部对齐">
           <svg width="20" height="20"><rect x="4" y="15" width="12" height="3" fill="#333"/><rect x="6" y="2" width="8" height="11" fill="#bbb"/></svg>
         </button>
-        <button @click="alignVCenter" title="垂直居中">
+        <button @mouseenter="previewAlign('middle')" @mouseleave="leaveAlign" @click="clickAlign('middle')" title="垂直居中">
           <svg width="20" height="20"><rect x="4" y="9" width="12" height="2" fill="#333"/><rect x="6" y="4" width="8" height="12" fill="#bbb"/></svg>
         </button>
-        <button @click="alignHCenter" title="水平居中">
+        <button @mouseenter="previewAlign('center')" @mouseleave="leaveAlign" @click="clickAlign('center')" title="水平居中">
           <svg width="20" height="20"><rect x="9" y="4" width="2" height="12" fill="#333"/><rect x="4" y="6" width="12" height="8" fill="#bbb"/></svg>
         </button>
-        <button @click="distributeH" title="等距分布左右">
+        <button @mouseenter="previewAlign('spaceH')" @mouseleave="leaveAlign" @click="clickAlign('spaceH')" title="等距分布左右">
           <svg width="20" height="20"><rect x="2" y="7" width="3" height="6" fill="#bbb"/><rect x="8.5" y="7" width="3" height="6" fill="#bbb"/><rect x="15" y="7" width="3" height="6" fill="#bbb"/><rect x="5" y="10" width="10" height="1" fill="#333"/></svg>
         </button>
-        <button @click="distributeV" title="等距分布上下">
+        <button @mouseenter="previewAlign('spaceV')" @mouseleave="leaveAlign" @click="clickAlign('spaceV')" title="等距分布上下">
           <svg width="20" height="20"><rect x="7" y="2" width="6" height="3" fill="#bbb"/><rect x="7" y="8.5" width="6" height="3" fill="#bbb"/><rect x="7" y="15" width="6" height="3" fill="#bbb"/><rect x="10" y="5" width="1" height="10" fill="#333"/></svg>
         </button>
-        <button @click="sameSize" title="相同大小">
+        <button @mouseenter="previewAlign('same')" @mouseleave="leaveAlign" @click="clickAlign('same')" title="相同大小">
           <svg width="20" height="20"><rect x="4" y="4" width="5" height="5" fill="#bbb"/><rect x="11" y="11" width="5" height="5" fill="#bbb"/><rect x="4" y="4" width="12" height="12" fill="none" stroke="#333" stroke-width="1"/></svg>
         </button>
       </div>
