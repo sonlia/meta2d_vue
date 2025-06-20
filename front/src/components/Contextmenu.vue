@@ -1,8 +1,10 @@
 <script setup>
 import {computed, onMounted, reactive, ref, nextTick} from "vue";
 import {useEventbus} from "../hooks/useEventbus.js";
-
+import { getAllChildren,setHover } from "@meta2d/core";
 import {lockStatus} from "../data/defaultsConfig.js"
+window.getAllChildren = getAllChildren;
+window.setHover = setHover;
 let isPens = ref(false)
 let ctxMenu = ref()
 let activePens = ref([])

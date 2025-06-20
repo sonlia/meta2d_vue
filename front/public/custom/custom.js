@@ -1,5 +1,4 @@
 import { parseSvg } from "@meta2d/svg";
-
 import { ElMessage } from "element-plus";
 
 const user = {
@@ -72,6 +71,8 @@ const didaoSwitch = {
       ey: 1,
       locked: 0,
       visible: true,
+      //地刀为真
+      flag: "groundSwitch",
     },
     {
       width: 1,
@@ -446,6 +447,8 @@ const loadSwitch = {
       originId: "168de522",
       lineAnimateImages: [],
       text: "断路器",
+      //断路器为真
+      flag: "powerBreaker",
     },
     {
       anchors: [
@@ -577,15 +580,14 @@ const busBar = {
         id: "1",
       },
     ],
- 
+
     width: 200,
     height: 5,
     name: "rectangle",
     lineWidth: 2,
     background: "#222222",
     text: "母线",
-    flag:"busBar",
-    
+    flag: "busBar",
   },
 };
 
@@ -1200,7 +1202,7 @@ const fuhekaiguan = {
         },
       ],
       rotate: 0,
-   
+
       events: [
         {
           where: {
@@ -1354,6 +1356,7 @@ const power = {
       lineWidth: 1,
       fontSize: 12,
       lineHeight: 1.5,
+      flag: "power",
       anchors: [
         {
           x: 0.5,
@@ -1421,8 +1424,8 @@ const prevNode = {
     path: "M16 28V6M8 20h16M4 28h24",
     lineWidth: 6, // 这里设置线宽
     text: "上一节点",
- 
-    goToOutPath:""
+
+    goToOutPath: "",
   },
 };
 
@@ -1440,19 +1443,19 @@ const nextNode = {
     path: "M16 4V26M24 12h-16M28 4h-24",
     lineWidth: 6, // 这里设置线宽
     text: "下一节点",
- 
-    goToOutPath:"",
-    events:[
+
+    goToOutPath: "",
+    events: [
       {
-          "where": {
-              "type": null
-          },
-          "name": "dblclick",
-          "action": 5,
-          "value": "globalThis.openFile(pen.goToOutPath)",
-          "fn": null
-      }
-  ]
+        where: {
+          type: null,
+        },
+        name: "dblclick",
+        action: 5,
+        value: "globalThis.openFile(pen.goToOutPath)",
+        fn: null,
+      },
+    ],
   },
 };
 
@@ -1509,8 +1512,7 @@ globalThis.updateColor = (pen, params) => {
   const start = meta2d
     .data()
     .pens.filter(
-      (n) =>
-        Array.isArray(n.tags) && n.tags.includes("power") && n.showChild == 1
+      (n) => n.hasOwnProperty("flag") && n.flag == "power" && n.showChild == 1
     );
 
   // 遍历  并初始化颜色
@@ -1522,7 +1524,6 @@ globalThis.updateColor = (pen, params) => {
         color: "#666666", // 设置默认颜色为灰色
       });
     }
-
 
     if (pen?.flag == "busBar") {
       meta2d.setValue({
@@ -1537,10 +1538,10 @@ globalThis.updateColor = (pen, params) => {
     if (!node) return;
     //判断短路
     if (
-      Array.isArray(node?.tags) &&
-      node?.tags.includes("power") &&
-      node.id != powerId&&
-      node?.showChild==1
+      node?.hasOwnProperty("flag") &&
+      node.flag == "power" &&
+      node.id != powerId &&
+      node?.showChild == 1
     ) {
       ElMessage({
         message: "线路短路",
@@ -1565,7 +1566,6 @@ globalThis.updateColor = (pen, params) => {
       });
     }
 
- 
     // showChild 为 0 时表示断开，忽略，不继续遍历
     if (node?.showChild === 0) {
       return;
@@ -1596,6 +1596,167 @@ globalThis.updateColor = (pen, params) => {
   // 颜色分配完后清空色相池，保证下次重新分配时颜色依然分散
   usedHues.length = 0;
 };
+
+function findNearestCustomNodesDeep(id, visited = new Set(), startId = id) {
+  const node = meta2d.findOne(id);
+  if (!node || visited.has(id)) return [];
+  visited.add(id);
+
+  // 满足条件：type 不存在/type=0/有 showChild，且不是起始节点
+  if (
+    (typeof node.type === "undefined" ||
+      node.type === 0 ||
+      node.hasOwnProperty("showChild")) &&
+    node.id !== startId
+  ) {
+    return [node];
+  }
+
+  // 邻居扩展
+  const neighbors = [];
+  if (node.connectedLines) {
+    node.connectedLines.forEach((n) => neighbors.push(n.lineId));
+  }
+  if (node.type === 1 && node.anchors) {
+    node.anchors.forEach((a) => neighbors.push(a.connectTo));
+  }
+
+  // 对每个邻居递归查找
+  let result = [];
+  neighbors.forEach((nid) => {
+    if (!visited.has(nid)) {
+      result = result.concat(findNearestCustomNodesDeep(nid, visited, startId));
+    }
+  });
+  return result;
+}
+
+/**
+ * 计算两个节点的中心点欧氏距离
+ */
+function calcDistance(nodeA, nodeB) {
+  const ax = nodeA.x + nodeA.width / 2;
+  const ay = nodeA.y + nodeA.height / 2;
+  const bx = nodeB.x + nodeB.width / 2;
+  const by = nodeB.y + nodeB.height / 2;
+  return Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
+}
+
+function findClosestMutexNode(startId) {
+  const startNode = meta2d.findOne(startId);
+  if (!startNode) return null;
+
+  // 互斥类型
+  let targetFlag = null;
+  if (startNode.flag === "powerBreaker") {
+    targetFlag = "groundSwitch";
+  } else if (startNode.flag === "groundSwitch") {
+    targetFlag = "powerBreaker";
+  } else {
+    // 不是这两种类型直接返回 null
+    return null;
+  }
+
+  // 1. 先找所有最近一层的目标类型节点
+  const nearestNodes = findNearestCustomNodesDeep(startId);
+  const filtered = nearestNodes.filter((node) => node.flag === targetFlag);
+
+  if (!filtered.length) return null;
+  if (filtered.length === 1) return filtered[0];
+
+  // 2. 计算距离，找最近的
+  let minDist = Infinity;
+  let closest = null;
+  filtered.forEach((node) => {
+    const dist = calcDistance(startNode, node);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = node;
+    }
+  });
+  return closest;
+}
+
+/**
+ * 基于连接递归查找所有 flag 为 power 且 showChild !== 0 的节点
+ * @param {string} id 起始节点 id
+ * @param {Set} visited 已访问节点集合
+ * @param {Array} result 结果数组
+ * @returns {Array} 满足条件的节点数组
+ */
+function countPowerNodes(id, visited = new Set(), result = [], isRoot = true) {
+  const node = meta2d.findOne(id);
+  if (!node || visited.has(id)) return result;
+  visited.add(id);
+debugger
+  // 只收集 showChild !== 0 的 power 节点
+  if (node.flag === "power" && node.showChild !== 0) {
+    result.push(node);
+  }
+
+  // 如果不是起点且 showChild === 0，不再向外扩展
+  if (!isRoot && node.showChild === 0) return result;
+
+  // 有连接节点的遍历
+  if (node.connectedLines) {
+    node.connectedLines.forEach(n => {
+      if (!visited.has(n.lineId)) {
+        countPowerNodes(n.lineId, visited, result, false);
+      }
+    });
+  }
+  // 如果是线 则继续遍历
+  if (node.type === 1 && node.anchors) {
+    node.anchors.forEach(n => {
+      if (!visited.has(n.connectTo)) {
+        countPowerNodes(n.connectTo, visited, result, false);
+      }
+    });
+  }
+  return result;
+}
+
+//检查互斥点是否允许闭合
+function checkMutexNode(node) {
+  const mutexNode = findClosestMutexNode(node.id);
+  //如果选中地刀则判断是否 断路器在闭合状态
+  if (node.flag == "groundSwitch" && mutexNode?.showChild == 1) {
+    ElMessage({
+      message: "断路器处于闭合状态，无法闭合地刀",
+      type: "error",
+    });
+    return false;
+  }
+  if (countPowerNodes(node.id).length !== 0) {
+    ElMessage({
+      message: "线路带电，不能闭合地刀",
+      type: "error",
+    });
+    return false;
+  }
+  return true;
+}
+// 检查断路器是否允许闭合（地刀必须断开，即showChild==0）
+function checkBreakerClose(id) {
+  // 默认选中的是断路器
+  // 查找与该断路器关联的地刀节点
+  const mutexNode = findClosestMutexNode(id);
+  // 如果地刀存在且处于闭合状态（showChild !== 0），则断路器不允许闭合
+  if (mutexNode?.flag === "groundSwitch" && mutexNode?.showChild !== 0) {
+    ElMessage({
+      message: "地刀未断开，不能闭合断路器",
+      type: "error",
+    });
+    return false;
+  }
+  return true;
+}
+
+globalThis.checkBreakerClose = checkBreakerClose;
+
+
+ 
+globalThis.checkMutexNode = checkMutexNode;
 
 export const customData = {
   loaded: true,
