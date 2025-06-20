@@ -177,44 +177,7 @@ function clearCombine() {
   ctxMenu.value.blur();
 }
 
-function setBreakPoint(){
-  if(!isPens.value || activePens.value.length===0) return;
-  const target = activePens.value[0];
-  // 以中心为基准放大 1.3 倍
-  const scale = 1.3;
-  const newWidth = target.width * scale;
-  const newHeight = target.height * scale;
-  const newX = target.x - (newWidth - target.width) / 2;
-  const newY = target.y - (newHeight - target.height) / 2;
-
-  const bpPen = {
-    id:`bp-${Date.now()}`,
-    name:'square', // 使用方形描边
-    breakpoint:true,
-    x: newX,
-    y: newY,
-    width: newWidth,
-    height: newHeight,
-    lineWidth:3,
-    color:'#ff0000',
-    background:'',
-    locked:2,
-  };
-  meta2d.addPen(bpPen);
  
-  ctxMenu.value.blur();
-}
-
-function clearBreakPoint(){
- 
-  if(!isPens.value || activePens.value.length===0) return;
-  const target = activePens.value[0];
-  if(target.hasOwnProperty('breakpoint')&&target.breakpoint===true){
-    meta2d.delete([target],true);
-  }
-  ctxMenu.value.blur();
-}
-
 </script>
 
 <template>
@@ -233,8 +196,7 @@ function clearBreakPoint(){
     <div class="ctx_item"  v-show="isAppendToCombineVisible&& lockStatus === 0" @click="appendToCombine">追加到组合</div>
     <div class="ctx_item" v-show="isGroup&& lockStatus === 0" @click="clearCombine">递归取消组合</div>
 
-    <div class="ctx_item" v-show="isPens && lockStatus!==0" @click="setBreakPoint">设置断开点</div>
-    <div class="ctx_item" v-show="isPens && lockStatus!==0" @click="clearBreakPoint">清除断开点</div>
+  
   </div>
 
 </template>

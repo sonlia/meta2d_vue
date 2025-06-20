@@ -1505,7 +1505,7 @@ function hslToHex(h, s, l) {
   );
 }
 
-globalThis.updateColor = (pen, params) => {
+globalThis.updateColor = (pen) => {
   const hasStep = [];
 
   // power节点：从 tags 包含 power 的节点开始
@@ -1547,6 +1547,36 @@ globalThis.updateColor = (pen, params) => {
         message: "线路短路",
         type: "error",
       });
+
+      // 添加红色断点标识
+      // 以中心为基准放大 1.3 倍
+      const scale = 1.3;
+      const newWidth = pen.width * scale;
+      const newHeight = pen.height * scale;
+      const newX = pen.x - (newWidth - pen.width) / 2;
+      const newY = pen.y - (newHeight - pen.height) / 2;
+      const bpPen = {
+        id: `bp-${Date.now()}`,
+        name: 'square',
+
+        x: newX,
+        y: newY,
+        width: newWidth,
+        height: newHeight,
+        lineWidth: 3,
+        color: '#ff0000',
+        background: '',
+        locked: 2,
+        events: [
+          {
+              "name": "dblclick",
+              "action": 5,
+              "value": "   meta2d.delete([pen],true);",
+              "_hover": false
+          }
+      ]
+      };
+      meta2d.addPen(bpPen);
 
       meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild });
       updateColor();
@@ -1688,7 +1718,7 @@ function countPowerNodes(id, visited = new Set(), result = [], isRoot = true) {
   const node = meta2d.findOne(id);
   if (!node || visited.has(id)) return result;
   visited.add(id);
-debugger
+
   // 只收集 showChild !== 0 的 power 节点
   if (node.flag === "power" && node.showChild !== 0) {
     result.push(node);
