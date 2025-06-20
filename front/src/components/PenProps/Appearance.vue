@@ -954,89 +954,42 @@ let showMap = computed(() => {
   }
 });
 
+// -------- 使用 meta2d 官方 API 对齐 ----------
 function alignLeft() {
-  const minX = Math.min(...activePen.target.map(p => p.x));
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, x: minX }, { render: false });
-  }
-  meta2d.render();
+  meta2d.alignNodes('left', activePen.target);
 }
 
 function alignRight() {
-  const maxRight = Math.max(...activePen.target.map(p => p.x + p.width));
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, x: maxRight - pen.width }, { render: false });
-  }
-  meta2d.render();
+  meta2d.alignNodes('right', activePen.target);
 }
 
 function alignTop() {
-  const minY = Math.min(...activePen.target.map(p => p.y));
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, y: minY }, { render: false });
-  }
-  meta2d.render();
+  meta2d.alignNodes('top', activePen.target);
 }
 
 function alignBottom() {
-  const maxBottom = Math.max(...activePen.target.map(p => p.y + p.height));
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, y: maxBottom - pen.height }, { render: false });
-  }
-  meta2d.render();
+  meta2d.alignNodes('bottom', activePen.target);
 }
 
 function alignVCenter() {
-  const centerY = (Math.min(...activePen.target.map(p => p.y)) + Math.max(...activePen.target.map(p => p.y + p.height))) / 2;
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, y: centerY - pen.height / 2 }, { render: false });
-  }
-  meta2d.render();
+  meta2d.alignNodes('middle', activePen.target);
 }
 
 function alignHCenter() {
-  const centerX = (Math.min(...activePen.target.map(p => p.x)) + Math.max(...activePen.target.map(p => p.x + p.width))) / 2;
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, x: centerX - pen.width / 2 }, { render: false });
-  }
-  meta2d.render();
+  meta2d.alignNodes('center', activePen.target);
 }
 
 function distributeH() {
-  let pens = [...activePen.target].sort((a, b) => a.x - b.x);
-  const left = pens[0].x;
-  const right = pens[pens.length - 1].x;
-  const totalWidth = pens.reduce((sum, p) => sum + p.width, 0);
-  const gap = (pens[pens.length - 1].x - pens[0].x - totalWidth) / (pens.length - 1);
-  let x = left;
-  for (let pen of pens) {
-    meta2d.setValue({ id: pen.id, x }, { render: false });
-    x += pen.width + gap;
-  }
-  meta2d.render();
+  meta2d.spaceBetween(activePen.target);
 }
 
 function distributeV() {
-  let pens = [...activePen.target].sort((a, b) => a.y - b.y);
-  const top = pens[0].y;
-  const bottom = pens[pens.length - 1].y;
-  const totalHeight = pens.reduce((sum, p) => sum + p.height, 0);
-  const gap = (pens[pens.length - 1].y - pens[0].y - totalHeight) / (pens.length - 1);
-  let y = top;
-  for (let pen of pens) {
-    meta2d.setValue({ id: pen.id, y }, { render: false });
-    y += pen.height + gap;
-  }
-  meta2d.render();
+  meta2d.spaceBetweenColumn(activePen.target);
 }
 
 function sameSize() {
-  const w = activePen.target[0].width;
-  const h = activePen.target[0].height;
-  for (let pen of activePen.target) {
-    meta2d.setValue({ id: pen.id, width: w, height: h }, { render: false });
-  }
-  meta2d.render();
+  // 参考第一个节点，宽高都相同
+  meta2d.beSameByFirst(activePen.target);
 }
 </script>
 

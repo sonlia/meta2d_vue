@@ -71,8 +71,7 @@ const didaoSwitch = {
       ey: 1,
       locked: 0,
       visible: true,
-      //地刀为真
-      flag: "groundSwitch",
+ 
     },
     {
       width: 1,
@@ -170,6 +169,8 @@ const didaoSwitch = {
       ],
       rotate: 0,
       lineAnimateImages: [],
+           //地刀为真
+           flag: "groundSwitch",
       events: [
         {
           where: {
@@ -177,8 +178,7 @@ const didaoSwitch = {
           },
           name: "click",
           action: 5,
-          value:
-            "context.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+          value:            'if(globalThis.checkMutexNode(pen)){\nconst node = context.meta2d.findOne(pen.id)\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })\n}\n\n\n\n\n',
           fn: null,
         },
         {
@@ -417,7 +417,7 @@ const loadSwitch = {
           name: "click",
           action: 5,
           value:
-            "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
+           'const node = context.meta2d.findOne(pen.id)\nif(globalThis.checkBreakerClose(pen.id)){\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })\n}\n\n',
           fn: null,
         },
         {
