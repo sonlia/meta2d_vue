@@ -9,13 +9,15 @@ import Uploader from 'simple-uploader.js';
 import { ref } from "vue"
   
 
-function getUserDir(path, extend = []) {
+// 统一API获取目录内容，type为icon/svg/png/path2D/canvasDraw
+function getUserDirApi(type, extend = []) {
   return async () => {
-    const { data: fileList } = await axios.get(path)
-     return fileList.concat(extend) // 合并路径，方便未来用户自定义扩充路径
-    return
+    const { data } = await axios.get(`/api/packages?type=${type}`)
+    let fileList = Array.isArray(data) ? data : (data?.data || [])
+    return fileList.concat(extend)
   }
 }
+
 export async function openFile(filePath) {
   try {
     const blob = await downloadFileFromServer(filePath);
@@ -58,11 +60,11 @@ export  const updateData = ref(0)
 
 export const currentSelect = ref()
 export const userPensUrl = {
-  icon: getUserDir("/icon/", []),
-  svg: getUserDir("/svg/", []),
-  png: getUserDir("/png/", []),
-  path2D: getUserDir("/path2D/", []),
-  canvasDraw: getUserDir("/canvasDraw/", []),
+  icon: getUserDirApi('icon'),
+  svg: getUserDirApi('svg'),
+  png: getUserDirApi('png'),
+  path2D: getUserDirApi('path2D'),
+  canvasDraw: getUserDirApi('canvasDraw'),
 }
 
 export const menu = {

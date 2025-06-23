@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --open --port 8080",
+    "predev": "npx kill-port 8080",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "npm cache verify & rmdir /s/q node_modules & del package-lock.json & npm install & npm run dev"

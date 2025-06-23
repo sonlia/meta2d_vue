@@ -543,6 +543,37 @@ app.post('/api/getSwitchHistory', checkAuth, async (req, res) => {
   }
 });
 
+// ========== UNIFIED PACKAGE API START ==========
+// 统一获取目录包API /api/packages?type=icon/svg/png/path2D/canvasDraw
+const typeDirMap = {
+  icon: 'icon',
+  svg: 'svg',
+  png: 'png',
+  path2D: 'path2D',
+  canvasDraw: 'canvasDraw',
+};
+
+app.get('/api/packages', (req, res) => {
+  const { type } = req.query;
+  const dirName = typeDirMap[type];
+  if (!dirName) {
+    return res.status(400).json({ error: 'type参数无效' });
+  }
+  const dirPath = path.join(__dirname, '../front/public', dirName);
+  try {
+    const dirs = fs.readdirSync(dirPath, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => ({ name: dirent.name }));
+    res.json(dirs);
+  } catch (e) {
+    res.status(500).json({ error: '读取目录失败', detail: e.message });
+  }
+});
+// 静态托管所有资源
+Object.values(typeDirMap).forEach(dir => {
+  app.use(`/${dir}`, express.static(path.join(__dirname, '../front/public', dir)));
+});
+// ========== UNIFIED PACKAGE API END ==========
 const distDir = path.join("../front", 'dist');
 app.use(express.static(distDir));
 
