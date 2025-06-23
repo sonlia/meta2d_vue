@@ -555,7 +555,8 @@ const menuFunc = {
           meta2d.downloadPng(name) // 导出为png
           break
         case "svg":
-          downloadSvg() // 导出为svg
+          
+        downloadSvgWithFonts() // 导出为svg
           break
       }
     },
@@ -577,46 +578,42 @@ function isShowChild(pen, store) {
 return true
 }
 
-const downloadSvg = () => {
-  const rect = meta2d.getRect()
-  rect.x -= 10
-  rect.y -= 10
-  const ctx = new C2S(rect.width + 20, rect.height + 20)
- 
- 
-
-
-
-  ctx.textBaseline = "middle"
-  for (const pen of meta2d.store.data.pens) {
-    if (pen.visible == false || !isShowChild(pen, meta2d.store)) {
-      continue
-    }
-    meta2d.renderPenRaw(ctx, pen, rect)
-  }
-
-  let mySerializedSVG = ctx.getSerializedSvg()
-  if (meta2d.store.data.background) {
-    mySerializedSVG = mySerializedSVG.replace("{{bk}}", "")
-    mySerializedSVG = mySerializedSVG.replace("{{bkRect}}", `<rect x="0" y="0" width="100%" height="100%" fill="${meta2d.store.data.background}"></rect>`)
-  } else {
-    mySerializedSVG = mySerializedSVG.replace("{{bk}}", "")
-    mySerializedSVG = mySerializedSVG.replace("{{bkRect}}", "")
-  }
-
-  mySerializedSVG = mySerializedSVG.replace(/--le5le--/g, "&#x")
-
-  const urlObject = window.URL || window
-  const export_blob = new Blob([mySerializedSVG])
-  const url = urlObject.createObjectURL(export_blob)
-
-  const a = document.createElement("a")
-  a.setAttribute("download", `${meta2d.store.data.name || "le5le.meta2d"}.svg`)
-  a.setAttribute("href", url)
-  const evt = document.createEvent("MouseEvents")
-  evt.initEvent("click", true, true)
-  a.dispatchEvent(evt)
+// 获取单个 iconfont.css 内容中的 @font-face 片段
+async function fetchFontFace(cssPath) {
+  const res = await axios.get( cssPath);
+  const match = res.data.match(/@font-face([\s\S]*?)\}/);
+  return match ? `@font-face ${match[1]}}` : '';
 }
+
+// 收集当前画布用到的 icon 字体
+async function collectUsedFontFaces() {
+  const hasIcon = meta2d.store.data.pens.some(p => p.iconFamily && p.icon);
+  if (!hasIcon) return [];
+
+  const cssList = [
+    '/icon/国家电网/iconfont.css',
+    '/icon/电气工程/iconfont.css',
+    '/icon/通用图标/iconfont.css'
+  ];
+  return Promise.all(cssList.map(fetchFontFace));
+}
+
+export async function downloadSvgWithFonts() {
+  // 1. 确保图片节点的 calculative.img 已渲染
+  meta2d.store.data.pens.forEach(p => {
+    if (p.calculative?.img && typeof p.onRenderPenRaw === 'function') {
+      p.onRenderPenRaw.call(p, p);
+    }
+  });
+
+  // 2. 收集当前画布使用到的 iconfont 字体
+  const fontFaces = await collectUsedFontFaces();
+
+  // 3. 直接调用官方 API 导出，官方实现自动处理选区、黑框、异常路径等细节
+  meta2d.downloadSvg(fontFaces);
+}
+
+ 
 
 export const mapProps = {
   fileName: "",
