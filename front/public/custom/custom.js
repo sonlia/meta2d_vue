@@ -1387,25 +1387,15 @@ const power = {
       lineAnimateImages: [],
       events: [
         {
-          where: {
-            type: null,
-          },
-          name: "click",
-          action: 5,
-          value:
-            "const node = context.meta2d.findOne(pen.id)\r\ncontext.meta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })",
-          fn: null,
-        },
-        {
-          where: {
-            type: null,
-          },
-          name: "click",
-          action: 6,
-          value: "updateColor",
-          fn: null,
-        },
-      ],
+            "where": {
+                "type": null
+            },
+            "name": "click",
+            "action": 5,
+            "value": "const node = context.meta2d.findOne(pen.id)\nmeta2d.setValue({ id: pen.id, showChild: 1 - pen.showChild })\nif(pen.showChild ==1){\nmeta2d.setValue({ id: pen.children[1], color:globalThis.getRandomBrightColor() })\nconsole.log(\"fefe\",pen.children[1])\n}\nglobalThis.updateColor()",
+            "_hover": false
+        }
+    ],
     },
   ],
 };
@@ -1467,7 +1457,7 @@ const usedHues = [];
  * @param {number} minDiff 色相最小间隔（建议30-40）
  * @returns {string} 颜色字符串（如 #ff00ff）
  */
-function getRandomBrightColor(minDiff = 40) {
+globalThis.getRandomBrightColor = (minDiff = 40) => {
   let hue, isDistinct;
   let tryCount = 0;
   do {
@@ -1587,13 +1577,13 @@ globalThis.updateColor = (pen) => {
       meta2d.setValue({
         id: node.id,
         color: color,
-      });
+      }, { render: false });
     }
     if (node?.flag == "busBar") {
       meta2d.setValue({
         id: node.id,
         background: color,
-      });
+      }, { render: false });
     }
 
     // showChild 为 0 时表示断开，忽略，不继续遍历
@@ -1620,9 +1610,10 @@ globalThis.updateColor = (pen) => {
   };
 
   start.forEach((node) => {
-    const color = getRandomBrightColor();
+ const color = meta2d.findOne(node.children[1]).color
     updateNode(node.id, color, node.id);
   });
+  meta2d.render();
   // 颜色分配完后清空色相池，保证下次重新分配时颜色依然分散
   usedHues.length = 0;
 };

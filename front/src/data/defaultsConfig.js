@@ -421,6 +421,7 @@ const menuFunc = {
         updateData.value++
  
         const res = await uploadFileToServer(file, path);
+        ElMessage({ message: "保存成功", type: "success" })
         resolve(res);
       } catch (err) {
         reject(err.message || '保存失败');
