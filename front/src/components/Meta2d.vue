@@ -1,5 +1,6 @@
 <script setup>
 import { Meta2d } from "@meta2d/core"
+ 
 import { flowPens} from "@meta2d/flow-diagram";
 import {
   activityDiagram,
@@ -21,7 +22,7 @@ const event = useEventbus()
 
 onMounted(async ()=>{
   // 创建meta2d对象
-  let meta2d = new Meta2d("meta2d",{drawingLineName:"line",lineWidth:3})
+  let meta2d = new Meta2d("meta2d",{drawingLineName:"line",lineWidth:3,lineCross:true})
 
   meta2d.register(flowPens())
 

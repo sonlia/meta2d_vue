@@ -91,6 +91,11 @@ export const menu = {
           action: "saveAs",
           value: "png",
         },
+        {
+          name: "导出svg",
+          action: "saveAs",
+          value: "svg",
+        },
  
       ],
     },
@@ -577,6 +582,11 @@ const downloadSvg = () => {
   rect.x -= 10
   rect.y -= 10
   const ctx = new C2S(rect.width + 20, rect.height + 20)
+ 
+ 
+
+
+
   ctx.textBaseline = "middle"
   for (const pen of meta2d.store.data.pens) {
     if (pen.visible == false || !isShowChild(pen, meta2d.store)) {
@@ -667,6 +677,7 @@ export const globalConfigProps = {
   animateInterval: 10,
   textRotate: true,
   textFlip: false,
+
 
 }
 
