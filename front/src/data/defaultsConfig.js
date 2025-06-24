@@ -4,7 +4,9 @@ import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
 import Uploader from 'simple-uploader.js';
- 
+import jsPDF from 'jspdf';
+import { svg2pdf } from 'svg2pdf.js';
+
 
 import { ref } from "vue"
   
@@ -98,7 +100,7 @@ export const menu = {
           action: "saveAs",
           value: "svg",
         },
- 
+    
       ],
     },
 
@@ -569,8 +571,10 @@ const menuFunc = {
           meta2d.downloadPng(name) // 导出为png
           break
         case "svg":
-          
         downloadSvgWithFonts() // 导出为svg
+          break
+        case "pdf":
+          downloadAsPdf()
           break
       }
     },
@@ -612,22 +616,131 @@ async function collectUsedFontFaces() {
   return Promise.all(cssList.map(fetchFontFace));
 }
 
-export async function downloadSvgWithFonts() {
-  // 1. 确保图片节点的 calculative.img 已渲染
-  meta2d.store.data.pens.forEach(p => {
-    if (p.calculative?.img && typeof p.onRenderPenRaw === 'function') {
-      p.onRenderPenRaw.call(p, p);
-    }
-  });
+// 内部函数，只负责生成完整的SVG字符串
+async function _generateSvgString() {
+  if (!window.C2S) {
+    throw new Error("请先加载乐吾乐官网下的canvas2svg.js");
+  }
 
-  // 2. 收集当前画布使用到的 iconfont 字体
   const fontFaces = await collectUsedFontFaces();
 
-  // 3. 直接调用官方 API 导出，官方实现自动处理选区、黑框、异常路径等细节
-  meta2d.downloadSvg(fontFaces);
+  let isFullViewExport = false;
+  const canvasWidth = meta2d.store.data.width || meta2d.store.options.width;
+  const canvasHeight = meta2d.store.data.height || meta2d.store.options.height;
+  if (canvasWidth && canvasHeight && !meta2d.store.data.component) {
+    isFullViewExport = true;
+  }
+
+  const contentRect = meta2d.getRect();
+  if (isFullViewExport) {
+    contentRect.x = meta2d.store.data.origin.x;
+    contentRect.y = meta2d.store.data.origin.y;
+    contentRect.width = canvasWidth * meta2d.store.data.scale;
+    contentRect.height = canvasHeight * meta2d.store.data.scale;
+  }
+
+  contentRect.x -= 10;
+  contentRect.y -= 10;
+  const svgWidth = contentRect.width + 20;
+  const svgHeight = contentRect.height + 20;
+
+  const ctx = new window.C2S(svgWidth, svgHeight);
+  ctx.textBaseline = "middle";
+  ctx.strokeStyle = meta2d.store.styles.color;
+
+  const backgroundColor = meta2d.store.options.downloadBgTransparent
+    ? undefined
+    : meta2d.store.data.background || meta2d.store.styles.background;
+
+  if (backgroundColor) {
+    ctx.save();
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, svgWidth, svgHeight);
+    ctx.restore();
+  }
+  if (meta2d.store.bkImg && isFullViewExport) {
+    ctx.drawImage(meta2d.store.bkImg, 0, 0, contentRect.width, contentRect.height);
+  }
+
+  for (const pen of meta2d.store.data.pens) {
+    if (pen.visible !== false && isShowChild(pen, meta2d.store)) {
+      meta2d.renderPenRaw(ctx, pen, contentRect);
+    }
+  }
+
+  let svgString = ctx.getSerializedSvg();
+
+  if (fontFaces && fontFaces.length) {
+    const fontDefs = `<defs>
+      <style type="text/css">
+        ${fontFaces.join('\n')}
+      </style>
+      {{bk}}
+    </defs>
+    {{bkRect}}`;
+    svgString = svgString.replace("<defs/>", fontDefs);
+  }
+
+  if (backgroundColor) {
+    svgString = svgString.replace("{{bk}}", "");
+    svgString = svgString.replace("{{bkRect}}", `<rect x="0" y="0" width="100%" height="100%" fill="${backgroundColor}"></rect>`);
+  } else {
+    svgString = svgString.replace("{{bk}}", "");
+    svgString = svgString.replace("{{bkRect}}", "");
+  }
+
+  svgString = svgString.replace(/--le5le--/g, "&#x");
+
+  return svgString;
 }
 
- 
+export async function downloadAsPdf() {
+  const svgString = await _generateSvgString();
+  if (!svgString) {
+    console.error("生成SVG内容失败，无法导出PDF。");
+    return;
+  }
+
+  // 使用DOMParser将SVG字符串转换为SVGElement
+  const svgElement = new DOMParser().parseFromString(svgString, 'image/svg+xml').documentElement;
+
+  // 从SVG元素中获取准确的宽度和高度
+  const width = svgElement.width.baseVal.value;
+  const height = svgElement.height.baseVal.value;
+  
+  // 创建一个横向的、以磅(pt)为单位的jsPDF实例
+  const doc = new jsPDF({
+    orientation: width > height ? 'l' : 'p',
+    unit: 'pt',
+    format: [width, height]
+  });
+
+  // 使用svg2pdf将SVG元素绘制到PDF文档中
+  await svg2pdf(svgElement, doc, {});
+
+  // 保存PDF文件
+  doc.save(`${meta2d.store.data.name || 'le5le.meta2d'}.pdf`);
+}
+
+export async function downloadSvgWithFonts() {
+  const svgString = await _generateSvgString();
+  if (!svgString) {
+    console.error("生成SVG内容失败，无法下载。");
+    return;
+  }
+
+  const blob = new Blob([svgString], { type: 'image/svg+xml' });
+  const blobUrl = window.URL.createObjectURL(blob);
+
+  const linkElement = document.createElement("a");
+  linkElement.setAttribute("download", `${meta2d.store.data.name || "le5le.meta2d"}.svg`);
+  linkElement.setAttribute("href", blobUrl);
+
+  const clickEvent = document.createEvent("MouseEvents");
+  clickEvent.initEvent("click", true, true);
+  linkElement.dispatchEvent(clickEvent);
+  URL.revokeObjectURL(blobUrl);
+}
 
 export const mapProps = {
   fileName: "",
