@@ -4,8 +4,7 @@ import { ElMessage } from "element-plus"
 import { EventAction, PenType } from "@meta2d/core"
 import { useEventbus } from "../hooks/useEventbus.js"
 import Uploader from 'simple-uploader.js';
-import jsPDF from 'jspdf';
-import { svg2pdf } from 'svg2pdf.js';
+ 
 
 
 import { ref } from "vue"
@@ -694,33 +693,7 @@ async function _generateSvgString() {
   return svgString;
 }
 
-export async function downloadAsPdf() {
-  const svgString = await _generateSvgString();
-  if (!svgString) {
-    console.error("生成SVG内容失败，无法导出PDF。");
-    return;
-  }
-
-  // 使用DOMParser将SVG字符串转换为SVGElement
-  const svgElement = new DOMParser().parseFromString(svgString, 'image/svg+xml').documentElement;
-
-  // 从SVG元素中获取准确的宽度和高度
-  const width = svgElement.width.baseVal.value;
-  const height = svgElement.height.baseVal.value;
-  
-  // 创建一个横向的、以磅(pt)为单位的jsPDF实例
-  const doc = new jsPDF({
-    orientation: width > height ? 'l' : 'p',
-    unit: 'pt',
-    format: [width, height]
-  });
-
-  // 使用svg2pdf将SVG元素绘制到PDF文档中
-  await svg2pdf(svgElement, doc, {});
-
-  // 保存PDF文件
-  doc.save(`${meta2d.store.data.name || 'le5le.meta2d'}.pdf`);
-}
+ 
 
 export async function downloadSvgWithFonts() {
   const svgString = await _generateSvgString();
