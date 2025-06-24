@@ -6,6 +6,6 @@ cd  ../front
 yarn
 yarn build
 echo "启动服务"
-cd ../back
-nohup node ./server.js &
+cd ..
+nohup node ./back/server.js &
 echo "完毕 。。大爷"
