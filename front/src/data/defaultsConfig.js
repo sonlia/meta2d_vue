@@ -127,6 +127,13 @@ export const menu = {
   ],
   right: [
     {
+      key: "centerView",
+      name: "居中显示",
+      icon: "t-angle-left",
+      action: "centerView",
+    },
+ 
+    {
       key: "undo",
       name: "撤销",
       icon: "t-angle-left",
@@ -476,6 +483,10 @@ const menuFunc = {
     undo() {
       meta2d.undo()
     },
+    centerView() {
+      meta2d.centerView()
+    },
+ 
     redo() {
       meta2d.redo()
     },
