@@ -1,11 +1,12 @@
 git fetch --all
 git reset --hard origin/main
-cd back
-yarn
-cd  ../front
+cd  front
 yarn
 yarn build
+
+
+cd ../back
+yarn
 echo "启动服务"
-cd ..
-nohup node ./back/server.js &
+nohup node ./server.js &
 echo "完毕 。。大爷"
