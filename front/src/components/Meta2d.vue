@@ -19,7 +19,6 @@ import {useEventbus} from "../hooks/useEventbus.js";
 import Contextmenu from "./Contextmenu.vue";
 const event = useEventbus()
 
-
 onMounted(async ()=>{
   // 创建meta2d对象
   let meta2d = new Meta2d("meta2d",{drawingLineName:"line",lineWidth:3,lineCross:true,rule:true,downloadBgTransparent:false})
