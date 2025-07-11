@@ -768,7 +768,7 @@ export const globalConfigProps = {
   disableDockLine: false,
   disableTranslate: false,
   minScale: 0.1,
-  maxScale: 10,
+  maxScale: 20,
   autoAnchor: true,
   interval: 10,
   animateInterval: 10,
