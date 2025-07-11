@@ -573,14 +573,6 @@ app.get('/api/packages', (req, res) => {
 Object.values(typeDirMap).forEach(dir => {
   app.use(`/${dir}`, express.static(path.join(__dirname, '../front/public', dir)));
 });
-// ========== UNIFIED PACKAGE API END ==========
-const distDir = path.join("../front", 'dist');
-app.use(express.static(distDir));
-
-// 捕获所有路由请求，返回 index.html（支持 SPA）
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(distDir, 'index.html'));
-});
 
 
  
@@ -670,6 +662,14 @@ async function mergeFileChunksInternal({ fileName, relativePath, fileId, totalCh
 }
 
 
+// ========== UNIFIED PACKAGE API END ==========
+const distDir = path.join("../front", 'dist');
+app.use(express.static(distDir));
+
+// 捕获所有路由请求，返回 index.html（支持 SPA）
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(distDir, 'index.html'));
+});
 
 
 // 检查端口是否被占用并清理
